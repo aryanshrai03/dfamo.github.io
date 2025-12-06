@@ -1,140 +1,789 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dfamo - AI PDF Generator</title>
-    <link rel="stylesheet" href="styles.css">
+    
+    <!-- SEO & Meta Tags -->
+    <title>Dfamo — Homework Done in Seconds ⚡ | Free AI Tool by Aryansh Rai</title>
+    <meta name="description" content="Dfamo is a free AI-powered website that helps you complete your homework, assignments, and projects in seconds. No login required. Powered by FoilAI.">
+    <meta name="keywords" content="Dfamo, Aryansh Rai, FoilAI, AI homework, homework help, AI website, free AI, study AI, no login AI">
+    <meta name="author" content="Aryansh Rai, FoilAI">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://dfamo.co.uk/">
+    <meta property="og:title" content="Dfamo — AI Homework Helper">
+    <meta property="og:description" content="Generate assignments and PDFs instantly. Free & No Login.">
+    <meta property="og:image" content="https://dfamo.co.uk/logo.png">
 
-    <!-- jsPDF Library -->
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="https://dfamo.co.uk/logo.png">
+
+    <!-- Fonts (Optimized) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- PDF Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
+    <!-- Tailwind Config -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        violet: '#ea7af4',
+                        fandango: '#b43e8f',
+                        grape: '#6200b3',
+                        indigo: '#3b0086',
+                        darkPurple: '#290628',
+                        darker: '#0a0a0f',
+                    },
+                    fontFamily: {
+                        sans: ['Montserrat', 'sans-serif'],
+                    },
+                    backgroundImage: {
+                        'brand-gradient': 'linear-gradient(135deg, #ea7af4 0%, #b43e8f 50%, #6200b3 100%)',
+                    },
+                    animation: {
+                        'blob': 'blob 10s infinite',
+                        'fade-in-up': 'fadeInUp 0.6s ease-out forwards',
+                    },
+                    keyframes: {
+                        blob: {
+                            '0%': { transform: 'translate(0px, 0px) scale(1)' },
+                            '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
+                            '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+                            '100%': { transform: 'translate(0px, 0px) scale(1)' },
+                        },
+                        fadeInUp: {
+                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
     <style>
-        /* ——————————————————— GLOBAL FIX ——————————————————— */
-        .hidden {
-            display: none !important;
+        :root {
+            --violet: #ea7af4;
+            --dark-purple: #290628;
         }
 
-        /* ——————————————————— ALL EXISTING CSS KEPT SAME ——————————————————— */
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Inter', sans-serif; background: #0a0a0f; color: #fff; min-height: 100vh; overflow-x: hidden; }
-        .bg-pattern { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0;
-            background: radial-gradient(circle at 20% 50%, rgba(120,119,198,.15) 0%, transparent 50%),
-                        radial-gradient(circle at 80% 80%, rgba(147,51,234,.15) 0%, transparent 50%),
-                        radial-gradient(circle at 40% 20%, rgba(59,130,246,.1) 0%, transparent 50%); }
-        .grid-overlay { position: fixed; inset: 0; z-index: 0;
-            background-image: linear-gradient(rgba(255,255,255,.02) 1px, transparent 1px),
-                              linear-gradient(90deg, rgba(255,255,255,.02) 1px, transparent 1px);
-            background-size: 50px 50px; animation: gridMove 20s linear infinite; }
-        @keyframes gridMove { 0% { transform: translate(0,0); } 100% { transform: translate(50px,50px); } }
+        body {
+            background-color: var(--dark-purple);
+            color: #ffffff;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+        
+        /* Prevent header overlap on jump */
+        html { scroll-padding-top: 100px; }
 
-        .container { position: relative; z-index: 1; max-width: 1400px; margin: auto; padding: 2rem; }
-
-        .back-btn { position: absolute; top: 0; left: 0; padding: 12px 22px; border-radius: 12px; 
-            background: linear-gradient(135deg,#6366f1,#8b5cf6); border: none; color: #fff; cursor: pointer; }
-
-        header { text-align: center; margin-bottom: 4rem; }
-
-        .logo-section { padding: 2rem; border-radius: 24px; background: rgba(255,255,255,.02); backdrop-filter: blur(20px); display: inline-block; }
-
-        h1 { font-size: 5rem; font-weight: 900;
-            background: linear-gradient(135deg,#fff,#a78bfa,#ec4899);
-            -webkit-background-clip: text; color: transparent; animation: glow 2s infinite alternate; }
-
-        @keyframes glow { from { filter: drop-shadow(0 0 20px rgba(167,139,250,.5)); } to { filter: drop-shadow(0 0 40px rgba(236,72,153,.7)); } }
-
-        .subtitle { font-size: 1.25rem; color: #a78bfa; margin-top: 10px; }
-        .tagline { margin-top: 1.5rem; color: #9ca3af; max-width: 600px; margin-inline: auto; }
-
-        .main-grid { display: grid; gap: 2rem; }
-        @media (min-width:1024px) {
-            .main-grid { grid-template-columns: 1fr 1.2fr; }
+        /* Animated Grid */
+        .grid-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            background-image: linear-gradient(rgba(234, 122, 244, 0.03) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(234, 122, 244, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            animation: gridMove 60s linear infinite;
+            pointer-events: none;
+            will-change: transform;
         }
 
-        .card { padding: 2rem; background: rgba(17,24,39,.6); backdrop-filter: blur(20px);
-            border: 1px solid rgba(255,255,255,.1); border-radius: 24px; }
+        @keyframes gridMove {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(40px, 40px); }
+        }
 
-        .card-title { font-size: 1.75rem; background: linear-gradient(135deg,#fff,#a78bfa);
-            -webkit-background-clip: text; color: transparent; }
+        /* Glassmorphism */
+        .glass-panel {
+            background: rgba(41, 6, 40, 0.65);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        .glass-pill {
+            background: rgba(59, 0, 134, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
 
-        textarea { width: 100%; padding: 1rem; border-radius: 16px; background: rgba(31,41,55,.6);
-            border: 2px solid rgba(255,255,255,.1); color: #fff; height: 200px; }
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #1a0419; }
+        ::-webkit-scrollbar-thumb { background: #6200b3; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #ea7af4; }
 
-        .btn { padding: 1rem; border-radius: 16px; font-weight: bold; cursor: pointer; border: none; width: 100%; margin-top: 1rem; }
-        .btn-primary { background: linear-gradient(135deg,#6366f1,#8b5cf6); color: #fff; }
-        .btn-secondary { background: linear-gradient(135deg,#10b981,#059669); color: #fff; }
-        .btn-tertiary { background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.2); color: #ccc; }
+        /* Mobile Menu Animation */
+        .hidden-mobile-menu { display: none; }
+        .show-mobile-menu { display: flex; animation: slideDown 0.3s ease-out forwards; }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Preview Content */
-        .preview-content { margin-top: 1rem; padding: 1.5rem; border-radius: 16px; background: rgba(0,0,0,.4); max-height: 600px; overflow-y: auto; }
-        .content h1 { font-size: 2rem; margin-bottom: .5rem; }
-        .content h2 { font-size: 1.5rem; margin: 1rem 0 .5rem; }
-        .content h3 { font-size: 1.25rem; margin: .75rem 0 .5rem; }
-        .content p { line-height: 1.8; color: #cbd5e1; }
-
-        .signature { font-size: .9rem; font-style: italic; text-align: center; margin-top: 2rem; color: #a78bfa; }
+        /* Utilities */
+        .reveal-on-scroll { opacity: 0; }
+        .hidden { display: none !important; }
+        
+        /* Loader */
+        .loader {
+            width: 18px; height: 18px;
+            border: 2px solid #FFF;
+            border-bottom-color: transparent;
+            border-radius: 50%;
+            display: inline-block;
+            box-sizing: border-box;
+            animation: rotation 1s linear infinite;
+        }
+        @keyframes rotation { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
+<body class="antialiased relative selection:bg-violet selection:text-darkPurple">
 
-<body>
+    <!-- Background Elements -->
+    <div class="grid-overlay"></div>
+    <div class="fixed top-0 left-0 w-full h-full pointer-events-none z-[-2] overflow-hidden">
+        <div class="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-grape rounded-full mix-blend-screen filter blur-[100px] opacity-20 animate-blob"></div>
+        <div class="absolute bottom-[-10%] left-[-10%] w-[500px] h-[500px] bg-fandango rounded-full mix-blend-screen filter blur-[100px] opacity-20 animate-blob animation-delay-2000"></div>
+    </div>
 
-<div class="bg-pattern"></div>
-<div class="grid-overlay"></div>
+    <!-- Navigation -->
+    <nav class="fixed top-4 md:top-6 left-0 right-0 z-50 flex justify-center px-4">
+        <div class="glass-pill rounded-full px-4 md:px-6 py-3 flex items-center justify-between gap-4 shadow-2xl shadow-indigo/40 w-full max-w-[95%] md:max-w-max transition-all duration-300">
+            
+            <!-- Logo -->
+            <a href="#" class="flex items-center gap-2 group min-w-max" aria-label="Dfamo Home">
+                <img src="https://dfamo.co.uk/logo.png" alt="Dfamo Logo" class="w-8 h-8 rounded-full border border-violet group-hover:rotate-12 transition-transform">
+                <span class="font-bold text-lg bg-clip-text text-transparent bg-gradient-to-r from-violet to-fandango">Dfamo</span>
+            </a>
 
-<div class="container">
-    <button onclick="window.location.href='https://dfamo.co.uk/'" class="back-btn">← Back</button>
+            <!-- Desktop Links -->
+            <div class="hidden md:flex items-center gap-6 text-xs font-bold uppercase tracking-wide text-gray-300">
+                <a href="#tool-section" class="hover:text-violet transition-colors">Tool</a>
+                <a href="#features" class="hover:text-violet transition-colors">Features</a>
+                <a href="#reviews" class="hover:text-violet transition-colors">Reviews</a>
+                <a href="#faq" class="hover:text-violet transition-colors">FAQ</a>
+                <a href="#team" class="hover:text-violet transition-colors">Team</a>
+            </div>
 
-    <header>
-        <div class="logo-section">
-            <h1>Dfamo</h1>
-            <p class="subtitle">AI PDF Generator</p>
+            <!-- Actions -->
+            <div class="flex items-center gap-3">
+                <a href="#donate" class="hidden md:flex items-center gap-1 text-xs font-bold text-pink-400 hover:text-pink-300 transition-colors mr-2">
+                    <i class="fa-solid fa-heart"></i> Donate
+                </a>
+                <a href="https://dfamo.co.uk/" class="bg-violet hover:bg-white hover:text-grape text-darkPurple font-bold px-4 py-1.5 rounded-full text-xs transition-all shadow-[0_0_10px_rgba(234,122,244,0.4)] whitespace-nowrap">
+                    Try Beta
+                </a>
+                <button id="mobile-menu-btn" class="md:hidden text-gray-200 hover:text-violet focus:outline-none p-1" aria-label="Toggle Menu">
+                    <i class="fa-solid fa-bars text-xl"></i>
+                </button>
+            </div>
         </div>
-        <p class="tagline">Transform your ideas into professional PDF assignments and notes instantly</p>
+
+        <!-- Mobile Menu Dropdown -->
+        <div id="mobile-menu" class="absolute top-20 left-4 right-4 glass-panel rounded-2xl p-4 hidden-mobile-menu flex-col gap-4 text-center md:hidden shadow-2xl z-50">
+            <a href="#tool-section" class="py-2 hover:text-violet border-b border-white/5" onclick="toggleMobileMenu()">Tool</a>
+            <a href="#features" class="py-2 hover:text-violet border-b border-white/5" onclick="toggleMobileMenu()">Features</a>
+            <a href="#reviews" class="py-2 hover:text-violet border-b border-white/5" onclick="toggleMobileMenu()">Feedbacks</a>
+            <a href="#team" class="py-2 hover:text-violet border-b border-white/5" onclick="toggleMobileMenu()">Our Team</a>
+            <a href="#donate" class="py-2 hover:text-pink-400 font-bold" onclick="toggleMobileMenu()"><i class="fa-solid fa-heart"></i> Donate</a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="relative pt-32 md:pt-44 pb-12 px-4 text-center overflow-hidden">
+        <div class="max-w-4xl mx-auto relative z-10 reveal-on-scroll">
+            <div class="inline-block mb-6 px-3 py-1 rounded-full border border-violet/30 bg-violet/10 text-violet text-[10px] md:text-xs font-semibold tracking-wider uppercase animate-pulse">
+                AI Version: Alpha (0.0.9)
+            </div>
+            <h1 class="text-4xl md:text-7xl font-black mb-6 leading-tight tracking-tight">
+                Homework Done in <br>
+                <span class="bg-clip-text text-transparent bg-gradient-to-r from-violet via-fandango to-grape drop-shadow-[0_0_15px_rgba(234,122,244,0.3)]">Seconds ⚡</span>
+            </h1>
+            <p class="text-base md:text-xl text-gray-300 max-w-2xl mx-auto mb-10 leading-relaxed px-2">
+                Smart Scalable Digital Solutions for students. Create essays, assignments, and study notes instantly. No login required. Powered by <span class="text-violet font-bold">FoilAI</span>.
+            </p>
+            
+            <div class="flex flex-col sm:flex-row gap-4 justify-center items-center px-4 w-full sm:w-auto">
+                <a href="#tool-section" class="w-full sm:w-auto px-8 py-4 bg-brand-gradient rounded-xl font-bold text-white shadow-lg shadow-indigo/40 hover:scale-105 transition-transform flex items-center justify-center gap-2 group">
+                    Start Generating <i class="fa-solid fa-wand-magic-sparkles group-hover:rotate-12 transition-transform"></i>
+                </a>
+                <a href="#guide" class="w-full sm:w-auto px-8 py-4 rounded-xl border border-white/10 hover:bg-white/5 font-semibold transition-all">
+                    How it Works
+                </a>
+            </div>
+        </div>
     </header>
 
-    <!-- Error -->
-    <div id="error-container" class="hidden">
-        <div class="error-message" id="error-message"></div>
-    </div>
-
-    <div class="main-grid">
-
-        <!-- LEFT SIDE -->
-        <div class="card">
-            <h2 class="card-title">Create Your Document</h2>
-
-            <form id="assignment-form">
-                <label>Topic or Instructions</label>
-                <textarea id="prompt" required></textarea>
-
-                <button type="submit" class="btn btn-primary" id="generate-btn">
-                    <span id="btn-text">Generate Document</span>
-                </button>
-            </form>
-        </div>
-
-        <!-- RIGHT SIDE -->
-        <div class="card">
-            <h2 class="card-title">Preview</h2>
-
-            <div class="button-group hidden" id="action-buttons">
-                <button class="btn btn-secondary" id="download-btn">Download PDF</button>
-                <button class="btn btn-tertiary" id="clear-btn">Clear</button>
-            </div>
-
-            <div class="preview-content">
-                <div id="preview-empty">Your generated document will appear here</div>
-                <div id="preview-content" class="content hidden"></div>
-            </div>
+    <!-- Ad Space 1 (Top) -->
+    <div class="container mx-auto max-w-5xl my-6 px-4">
+        <div class="w-full h-24 bg-black/20 border border-dashed border-white/10 rounded-lg flex flex-col items-center justify-center text-gray-500 text-xs">
+            <span class="mb-1 font-bold">ADVERTISEMENT</span>
+            <span>Support Dfamo by checking out our sponsors</span>
         </div>
     </div>
 
-    <footer><p>Powered by Dfamo AI • Created by Aryansh Rai</p></footer>
+    <!-- MAIN TOOL SECTION -->
+    <main id="tool-section" class="container mx-auto max-w-7xl px-4 py-8 md:py-12 reveal-on-scroll">
+        <div class="flex flex-col lg:grid lg:grid-cols-[1fr_1.2fr] gap-6 md:gap-8">
+            
+            <!-- Left Panel: Input -->
+            <div class="glass-panel p-6 md:p-8 rounded-3xl relative overflow-hidden flex flex-col">
+                <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-violet to-grape"></div>
+                
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-xl md:text-2xl font-bold flex items-center gap-3">
+                        <span class="w-8 h-8 rounded-lg bg-violet/20 flex items-center justify-center text-violet"><i class="fa-solid fa-pen-nib"></i></span>
+                        Input
+                    </h2>
+                    <span id="char-count" class="text-xs text-gray-500">0 chars</span>
+                </div>
+                
+                <form id="assignment-form" class="space-y-4 flex-grow flex flex-col">
+                    <!-- Advanced Controls -->
+                    <div class="grid grid-cols-2 gap-3 mb-2">
+                        <select id="tone-select" class="bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-gray-300 focus:border-violet outline-none cursor-pointer">
+                            <option value="Standard">Standard Tone</option>
+                            <option value="Academic">Academic / Formal</option>
+                            <option value="Creative">Creative / Story</option>
+                            <option value="Simple">Simple English</option>
+                        </select>
+                        <select id="lang-select" class="bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-gray-300 focus:border-violet outline-none cursor-pointer">
+                            <option value="English">English (US)</option>
+                            <option value="UK">English (UK)</option>
+                            <option value="Spanish">Spanish</option>
+                            <option value="French">French</option>
+                        </select>
+                    </div>
 
-</div>
+                    <div class="relative flex-grow">
+                        <textarea id="prompt" required placeholder="Describe your assignment here (e.g., 'Write a 1000-word essay on Climate Change')..." 
+                        class="w-full h-full min-h-[250px] bg-darker/50 border border-white/10 rounded-2xl p-4 text-white placeholder-gray-600 focus:outline-none focus:border-violet focus:ring-1 focus:ring-violet transition-all resize-none font-sans leading-relaxed text-base"></textarea>
+                    </div>
 
-<!-- Connect external JS -->
-<script src="pdfworker.js"></script>
+                    <button type="submit" id="generate-btn" class="w-full py-4 bg-gradient-to-r from-indigo to-grape hover:from-grape hover:to-fandango rounded-xl font-bold text-white shadow-lg shadow-indigo/30 transition-all active:scale-95 flex items-center justify-center gap-2 group">
+                        <span id="btn-text">Generate Document</span>
+                        <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                        <span id="btn-loader" class="hidden loader"></span>
+                    </button>
+                    <p class="hidden md:block text-center text-xs text-gray-500">Shortcut: <kbd class="bg-white/10 px-1 rounded">Ctrl</kbd> + <kbd class="bg-white/10 px-1 rounded">Enter</kbd></p>
+                </form>
 
+                <!-- Error Display -->
+                <div id="error-container" class="hidden mt-4 p-4 bg-red-500/20 border border-red-500/50 rounded-xl text-red-200 text-sm">
+                    <div id="error-message"></div>
+                </div>
+            </div>
+
+            <!-- Right Panel: Preview -->
+            <div class="glass-panel p-6 md:p-8 rounded-3xl flex flex-col h-full min-h-[500px]">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+                    <h2 class="text-xl md:text-2xl font-bold flex items-center gap-3">
+                        <span class="w-8 h-8 rounded-lg bg-fandango/20 flex items-center justify-center text-fandango"><i class="fa-solid fa-eye"></i></span>
+                        Preview
+                    </h2>
+                    <div id="action-buttons" class="hidden flex gap-2 w-full sm:w-auto">
+                         <button id="copy-btn" class="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg text-sm font-bold transition-colors text-white" aria-label="Copy Text" title="Copy to Clipboard">
+                            <i class="fa-regular fa-copy"></i>
+                        </button>
+                        <button id="download-btn" class="flex-1 sm:flex-none px-4 py-2 bg-green-600 hover:bg-green-500 rounded-lg text-sm font-bold transition-colors flex items-center justify-center gap-2 text-white shadow-lg shadow-green-900/20" aria-label="Download PDF">
+                            <i class="fa-solid fa-download"></i> Download PDF
+                        </button>
+                        <button id="clear-btn" class="px-4 py-2 bg-red-500/20 hover:bg-red-500/40 text-red-200 rounded-lg text-sm transition-colors" aria-label="Clear Content" title="Clear All">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="preview-content flex-grow bg-darker/40 rounded-2xl p-4 md:p-8 border border-white/5 overflow-y-auto font-serif text-gray-300 leading-loose shadow-inner relative text-sm md:text-base">
+                    <div id="preview-empty" class="absolute inset-0 flex flex-col items-center justify-center text-gray-600 opacity-60 pointer-events-none">
+                        <i class="fa-regular fa-file-lines text-5xl md:text-6xl mb-4"></i>
+                        <p>Your content will appear here</p>
+                    </div>
+                    <div id="preview-content" class="content hidden prose prose-invert max-w-none">
+                        <!-- Generated Content -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Features Section -->
+    <section id="features" class="py-16 md:py-20 bg-black/20 reveal-on-scroll">
+        <div class="container mx-auto px-4 max-w-6xl">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">Why use <span class="text-violet">Dfamo?</span></h2>
+                <p class="text-gray-400">Advanced features tailored for academic success.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="glass-panel p-6 rounded-2xl hover:border-violet/30 transition-colors group">
+                    <div class="w-12 h-12 bg-violet/20 rounded-full flex items-center justify-center text-violet mb-4 text-xl group-hover:scale-110 transition-transform"><i class="fa-solid fa-bolt"></i></div>
+                    <h3 class="text-xl font-bold mb-2">Instant Generation</h3>
+                    <p class="text-gray-400 text-sm">Process prompts faster than you can blink. Optimized for low-latency responses using FoilAI Engine.</p>
+                </div>
+                <div class="glass-panel p-6 rounded-2xl hover:border-fandango/30 transition-colors group">
+                    <div class="w-12 h-12 bg-fandango/20 rounded-full flex items-center justify-center text-fandango mb-4 text-xl group-hover:scale-110 transition-transform"><i class="fa-solid fa-file-pdf"></i></div>
+                    <h3 class="text-xl font-bold mb-2">Professional PDF</h3>
+                    <p class="text-gray-400 text-sm">Convert generated text directly into a formatted, professional PDF ready for submission.</p>
+                </div>
+                <div class="glass-panel p-6 rounded-2xl hover:border-grape/30 transition-colors group">
+                    <div class="w-12 h-12 bg-grape/20 rounded-full flex items-center justify-center text-grape mb-4 text-xl group-hover:scale-110 transition-transform"><i class="fa-solid fa-shield-halved"></i></div>
+                    <h3 class="text-xl font-bold mb-2">No Login Required</h3>
+                    <p class="text-gray-400 text-sm">Privacy first. Use the tool immediately without accounts, emails, or data tracking.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Ad Space 2 (Middle) -->
+    <div class="container mx-auto max-w-5xl my-8 px-4">
+        <div class="w-full h-24 bg-black/20 border border-dashed border-white/10 rounded-lg flex flex-col items-center justify-center text-gray-500 text-xs">
+            <span class="mb-1 font-bold">ADVERTISEMENT</span>
+            <span>Your Ad Here - Contact contact@dfamo.co.uk</span>
+        </div>
+    </div>
+
+    <!-- STUDENT FEEDBACK SECTION -->
+    <section id="reviews" class="py-16 bg-white/5 reveal-on-scroll">
+        <div class="container mx-auto px-4 max-w-6xl">
+            <h2 class="text-3xl font-bold mb-10 text-center">Student <span class="text-violet">Feedbacks</span></h2>
+            <div class="grid md:grid-cols-3 gap-6">
+                <div class="glass-panel p-6 rounded-xl relative">
+                    <i class="fa-solid fa-quote-left absolute top-4 right-4 text-white/5 text-4xl"></i>
+                    <div class="flex text-yellow-400 mb-3 text-sm"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                    <p class="text-gray-300 italic mb-4 text-sm leading-relaxed">"Saved my life during finals week. The PDF generation is super clean and the academic tone selector is a game changer."</p>
+                    <div class="flex items-center gap-3 mt-4">
+                        <div class="w-8 h-8 rounded-full bg-violet/20 flex items-center justify-center text-xs font-bold text-violet">SJ</div>
+                        <p class="font-bold text-sm text-white">Sarah J.</p>
+                    </div>
+                </div>
+                <div class="glass-panel p-6 rounded-xl relative">
+                    <i class="fa-solid fa-quote-left absolute top-4 right-4 text-white/5 text-4xl"></i>
+                    <div class="flex text-yellow-400 mb-3 text-sm"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                    <p class="text-gray-300 italic mb-4 text-sm leading-relaxed">"Better than ChatGPT for assignments because it formats everything for you. No copy-pasting needed."</p>
+                    <div class="flex items-center gap-3 mt-4">
+                        <div class="w-8 h-8 rounded-full bg-fandango/20 flex items-center justify-center text-xs font-bold text-fandango">MT</div>
+                        <p class="font-bold text-sm text-white">Mike T.</p>
+                    </div>
+                </div>
+                <div class="glass-panel p-6 rounded-xl relative">
+                    <i class="fa-solid fa-quote-left absolute top-4 right-4 text-white/5 text-4xl"></i>
+                    <div class="flex text-yellow-400 mb-3 text-sm"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i></div>
+                    <p class="text-gray-300 italic mb-4 text-sm leading-relaxed">"The dark mode UI is beautiful. Love using this tool for quick research summaries."</p>
+                    <div class="flex items-center gap-3 mt-4">
+                        <div class="w-8 h-8 rounded-full bg-grape/20 flex items-center justify-center text-xs font-bold text-grape">AP</div>
+                        <p class="font-bold text-sm text-white">Ananya P.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TEAM SECTION -->
+    <section id="team" class="py-16 md:py-24 relative overflow-hidden reveal-on-scroll">
+        <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-transparent via-indigo/10 to-transparent pointer-events-none"></div>
+        <div class="container mx-auto px-4 max-w-6xl relative z-10">
+            <div class="text-center mb-16">
+                <span class="text-violet font-bold tracking-widest uppercase text-xs">The Minds Behind</span>
+                <h2 class="text-3xl md:text-5xl font-bold mt-2">Our Team</h2>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                <!-- Member 1: Aryansh -->
+                <div class="glass-panel p-8 rounded-3xl flex flex-col md:flex-row items-center gap-6 group hover:-translate-y-2 transition-transform duration-300">
+                    <div class="w-24 h-24 rounded-full bg-gradient-to-br from-violet to-grape p-[2px]">
+                        <div class="w-full h-full rounded-full bg-darker flex items-center justify-center overflow-hidden">
+                            <i class="fa-solid fa-user-astronaut text-4xl text-gray-400"></i>
+                        </div>
+                    </div>
+                    <div class="text-center md:text-left flex-1">
+                        <h3 class="text-2xl font-bold text-white mb-1">Aryansh Rai</h3>
+                        <p class="text-violet font-medium mb-3">Founder & Creator</p>
+                        <p class="text-gray-400 text-sm mb-4">Visionary developer behind FoilAI and Dfamo.</p>
+                        <a href="https://aryansh.site" target="_blank" class="inline-flex items-center gap-2 text-sm font-bold text-white bg-white/10 hover:bg-white/20 px-4 py-2 rounded-lg transition-colors" aria-label="Visit Aryansh Rai's Website">
+                            Visit Website <i class="fa-solid fa-arrow-right -rotate-45 group-hover:rotate-0 transition-transform"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Member 2: AKM -->
+                <div class="glass-panel p-8 rounded-3xl flex flex-col md:flex-row items-center gap-6 group hover:-translate-y-2 transition-transform duration-300">
+                    <div class="w-24 h-24 rounded-full bg-gradient-to-br from-fandango to-indigo p-[2px]">
+                        <div class="w-full h-full rounded-full bg-darker flex items-center justify-center overflow-hidden">
+                            <i class="fa-solid fa-code text-4xl text-gray-400"></i>
+                        </div>
+                    </div>
+                    <div class="text-center md:text-left flex-1">
+                        <h3 class="text-2xl font-bold text-white mb-1">AKM</h3>
+                        <p class="text-fandango font-medium mb-3">Lead Developer</p>
+                        <p class="text-gray-400 text-sm mb-4">Expert in backend systems and AI integration.</p>
+                        <a href="https://inakm.github.io" target="_blank" class="inline-flex items-center gap-2 text-sm font-bold text-white bg-white/10 hover:bg-white/20 px-4 py-2 rounded-lg transition-colors" aria-label="Visit AKM's Website">
+                            Visit Website <i class="fa-solid fa-arrow-right -rotate-45 group-hover:rotate-0 transition-transform"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- DONATION SECTION -->
+    <section id="donate" class="py-16 bg-gradient-to-r from-darkPurple to-indigo/20 reveal-on-scroll">
+        <div class="container mx-auto px-4 max-w-3xl text-center">
+            <div class="inline-block p-4 rounded-full bg-white/5 mb-6 animate-bounce">
+                <i class="fa-solid fa-mug-hot text-4xl text-yellow-400"></i>
+            </div>
+            <h2 class="text-3xl font-bold mb-4">Enjoying Dfamo?</h2>
+            <p class="text-gray-300 mb-8 leading-relaxed">
+                Dfamo is free to use and maintained by students. If this tool helped you with your assignments, consider buying us a coffee to keep the servers running!
+            </p>
+            <a href="https://buymeacoffee.com/aryanshrai" target="_blank" class="inline-block px-8 py-4 bg-[#FFDD00] text-black font-black rounded-xl hover:scale-105 transition-transform shadow-[0_0_20px_rgba(255,221,0,0.4)]" aria-label="Buy Me a Coffee">
+                <i class="fa-solid fa-heart mr-2 text-red-600"></i> Buy Me a Coffee
+            </a>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section id="faq" class="py-16 reveal-on-scroll">
+        <div class="container mx-auto px-4 max-w-3xl">
+            <h2 class="text-3xl font-bold mb-8 text-center">Frequently Asked <span class="text-violet">Questions</span></h2>
+            <div class="space-y-4">
+                <details class="group bg-glass-panel rounded-xl p-4 cursor-pointer border border-white/10 transition-colors hover:border-violet/30">
+                    <summary class="font-bold list-none flex justify-between items-center text-lg">
+                        Is Dfamo really free?
+                        <span class="transition group-open:rotate-180"><i class="fa-solid fa-chevron-down text-sm"></i></span>
+                    </summary>
+                    <p class="text-gray-400 mt-4 text-sm leading-relaxed border-t border-white/5 pt-4">Yes! Dfamo is currently free to use for all students during our Alpha phase. We believe education should be accessible.</p>
+                </details>
+                
+                <details class="group bg-glass-panel rounded-xl p-4 cursor-pointer border border-white/10 transition-colors hover:border-violet/30">
+                    <summary class="font-bold list-none flex justify-between items-center text-lg">
+                        Do you store my essays?
+                        <span class="transition group-open:rotate-180"><i class="fa-solid fa-chevron-down text-sm"></i></span>
+                    </summary>
+                    <p class="text-gray-400 mt-4 text-sm leading-relaxed border-t border-white/5 pt-4">No. We value privacy. We do not store your prompts or generated essays. Everything happens in your browser session.</p>
+                </details>
+
+                <details class="group bg-glass-panel rounded-xl p-4 cursor-pointer border border-white/10 transition-colors hover:border-violet/30">
+                    <summary class="font-bold list-none flex justify-between items-center text-lg">
+                        Is the content plagiarism-free?
+                        <span class="transition group-open:rotate-180"><i class="fa-solid fa-chevron-down text-sm"></i></span>
+                    </summary>
+                    <p class="text-gray-400 mt-4 text-sm leading-relaxed border-t border-white/5 pt-4">Dfamo generates unique content based on your prompt using AI. However, we always recommend checking the output with a plagiarism checker and adding your own citations.</p>
+                </details>
+
+                <details class="group bg-glass-panel rounded-xl p-4 cursor-pointer border border-white/10 transition-colors hover:border-violet/30">
+                    <summary class="font-bold list-none flex justify-between items-center text-lg">
+                        Does it work on mobile?
+                        <span class="transition group-open:rotate-180"><i class="fa-solid fa-chevron-down text-sm"></i></span>
+                    </summary>
+                    <p class="text-gray-400 mt-4 text-sm leading-relaxed border-t border-white/5 pt-4">Absolutely. Dfamo is fully responsive and optimized for smartphones and tablets.</p>
+                </details>
+
+                 <details class="group bg-glass-panel rounded-xl p-4 cursor-pointer border border-white/10 transition-colors hover:border-violet/30">
+                    <summary class="font-bold list-none flex justify-between items-center text-lg">
+                        What languages are supported?
+                        <span class="transition group-open:rotate-180"><i class="fa-solid fa-chevron-down text-sm"></i></span>
+                    </summary>
+                    <p class="text-gray-400 mt-4 text-sm leading-relaxed border-t border-white/5 pt-4">Currently, we support English (US/UK), Spanish, and French. Select your preferred language in the input settings.</p>
+                </details>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Link Section -->
+    <section class="py-16 bg-white/5 reveal-on-scroll">
+        <div class="container mx-auto px-4 max-w-6xl text-center">
+            <h2 class="text-2xl font-bold mb-10">More from VroAI Labs</h2>
+            <div class="flex flex-wrap justify-center gap-4">
+                <a href="https://gpt.vroai.in/" target="_blank" class="px-6 py-3 rounded-xl bg-darker border border-white/10 hover:border-violet transition-colors flex items-center gap-2"><i class="fa-solid fa-robot"></i> VroGPT</a>
+                <a href="https://foilai.in/" target="_blank" class="px-6 py-3 rounded-xl bg-darker border border-white/10 hover:border-fandango transition-colors flex items-center gap-2"><i class="fa-solid fa-brain"></i> FoilAI</a>
+                <a href="https://links.vroai.in" target="_blank" class="px-6 py-3 rounded-xl bg-darker border border-white/10 hover:border-white transition-colors flex items-center gap-2"><i class="fa-solid fa-link"></i> All Links</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Ad Space 3 (Bottom) -->
+    <div class="container mx-auto max-w-5xl my-6 px-4">
+        <div class="w-full h-24 bg-black/20 border border-dashed border-white/10 rounded-lg flex flex-col items-center justify-center text-gray-500 text-xs">
+            <span class="mb-1 font-bold">ADVERTISEMENT</span>
+            <span>Place your banner here</span>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-darker border-t border-white/10 pt-16 pb-8">
+        <div class="container mx-auto px-4 max-w-7xl">
+            <div class="grid md:grid-cols-4 gap-8 mb-12">
+                <!-- Col 1 -->
+                <div class="col-span-1 md:col-span-2">
+                    <h2 class="text-2xl font-black bg-clip-text text-transparent bg-gradient-to-r from-violet to-grape mb-4">Dfamo</h2>
+                    <p class="text-gray-400 text-sm max-w-sm mb-6 leading-relaxed">Transforming education with scalable AI solutions. Built for students, by students. Powered by the FoilAI Engine.</p>
+                    <p class="text-xs text-gray-500">Made with ❤️ by VroAI Labs - <a href="http://vroai.in" class="hover:text-violet underline">http://vroai.in</a></p>
+                </div>
+                <!-- Col 2 -->
+                <div>
+                    <h4 class="font-bold mb-4 text-white">Quick Links</h4>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li><a href="#" class="hover:text-violet transition-colors">Home</a></li>
+                        <li><a href="#tool-section" class="hover:text-violet transition-colors">Tool</a></li>
+                        <li><a href="#reviews" class="hover:text-violet transition-colors">Reviews</a></li>
+                        <li><a href="mailto:contact@dfamo.co.uk" class="hover:text-violet transition-colors">Report Bug</a></li>
+                    </ul>
+                </div>
+                <!-- Col 3 -->
+                <div>
+                    <h4 class="font-bold mb-4 text-white">Legal & Contact</h4>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li><a href="#" class="hover:text-violet transition-colors">Privacy Policy</a></li>
+                        <li><a href="#" class="hover:text-violet transition-colors">Terms of Service</a></li>
+                        <li><a href="mailto:contact@dfamo.co.uk" class="hover:text-violet transition-colors">contact@dfamo.co.uk</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+                <p class="text-xs text-gray-600">&copy; 2023 Dfamo AI. All rights reserved.</p>
+                <div class="flex gap-6 text-xl">
+                    <a href="#" class="text-gray-600 hover:text-violet transition-colors" aria-label="Twitter"><i class="fa-brands fa-twitter"></i></a>
+                    <a href="#" class="text-gray-600 hover:text-violet transition-colors" aria-label="GitHub"><i class="fa-brands fa-github"></i></a>
+                    <a href="#" class="text-gray-600 hover:text-violet transition-colors" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Back to Top Button -->
+    <button id="backToTop" class="fixed bottom-6 right-6 bg-violet text-darkPurple w-12 h-12 rounded-full shadow-lg items-center justify-center hidden hover:bg-white hover:scale-110 transition-all z-40" aria-label="Back to Top">
+        <i class="fa-solid fa-arrow-up font-bold"></i>
+    </button>
+
+    <!-- JS Logic -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // --- 1. Mobile Menu Logic ---
+            const menuBtn = document.getElementById('mobile-menu-btn');
+            const mobileMenu = document.getElementById('mobile-menu');
+            
+            window.toggleMobileMenu = () => {
+                const isHidden = mobileMenu.classList.contains('hidden-mobile-menu');
+                if (isHidden) {
+                    mobileMenu.classList.remove('hidden-mobile-menu');
+                    mobileMenu.classList.add('show-mobile-menu');
+                    menuBtn.innerHTML = '<i class="fa-solid fa-xmark text-xl"></i>';
+                } else {
+                    mobileMenu.classList.add('hidden-mobile-menu');
+                    mobileMenu.classList.remove('show-mobile-menu');
+                    menuBtn.innerHTML = '<i class="fa-solid fa-bars text-xl"></i>';
+                }
+            };
+            menuBtn.addEventListener('click', window.toggleMobileMenu);
+
+            // --- 2. Scroll Animation ---
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('animate-fade-in-up');
+                        entry.target.style.opacity = '1';
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            document.querySelectorAll('.reveal-on-scroll').forEach(el => observer.observe(el));
+
+            // --- 3. Back to Top ---
+            const backToTopBtn = document.getElementById('backToTop');
+            window.addEventListener('scroll', () => {
+                window.requestAnimationFrame(() => {
+                    if (window.scrollY > 400) {
+                        backToTopBtn.classList.remove('hidden');
+                        backToTopBtn.classList.add('flex');
+                    } else {
+                        backToTopBtn.classList.add('hidden');
+                        backToTopBtn.classList.remove('flex');
+                    }
+                });
+            });
+            backToTopBtn.addEventListener('click', () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+
+            // --- 4. Tool Logic ---
+            const form = document.getElementById('assignment-form');
+            const promptInput = document.getElementById('prompt');
+            const toneSelect = document.getElementById('tone-select');
+            const langSelect = document.getElementById('lang-select');
+            const charCount = document.getElementById('char-count');
+            
+            const generateBtn = document.getElementById('generate-btn');
+            const btnText = document.getElementById('btn-text');
+            const btnLoader = document.getElementById('btn-loader');
+            
+            const previewContent = document.getElementById('preview-content');
+            const previewEmpty = document.getElementById('preview-empty');
+            const actionButtons = document.getElementById('action-buttons');
+            const downloadBtn = document.getElementById('download-btn');
+            const clearBtn = document.getElementById('clear-btn');
+            const copyBtn = document.getElementById('copy-btn');
+            const errorContainer = document.getElementById('error-container');
+
+            // Character Count
+            promptInput.addEventListener('input', () => {
+                charCount.textContent = `${promptInput.value.length} chars`;
+            });
+
+            // Generator Logic
+            const generateDocument = async (e) => {
+                e.preventDefault();
+                const topic = promptInput.value.trim();
+                const tone = toneSelect.value;
+                const lang = langSelect.value;
+
+                if (!topic) {
+                    showError("Please enter a topic.");
+                    return;
+                }
+
+                setLoading(true);
+                hideError();
+                
+                try {
+                    // Simulate API Delay
+                    await new Promise(resolve => setTimeout(resolve, 1800));
+
+                    // Dynamic HTML Generation based on Inputs
+                    const generatedHTML = `
+                        <h1 style="color:#ea7af4;">${topic}</h1>
+                        <p style="font-size:0.8em; color:#888;">Settings: ${tone} Tone | Language: ${lang}</p>
+                        <hr style="margin:10px 0; border-color:rgba(255,255,255,0.1);">
+                        
+                        <h3>Introduction</h3>
+                        <p>This is an AI-generated draft regarding <strong>${topic}</strong> using a <em>${tone}</em> tone. The subject matter involves complex analysis suitable for academic review.</p>
+                        
+                        <h3>Key Analysis</h3>
+                        <p>The primary factors influencing this topic include technological advancements and socio-economic shifts. It is crucial to consider the multi-dimensional impact on modern society.</p>
+                        <ul>
+                            <li>Factor 1: Quantitative analysis of data points.</li>
+                            <li>Factor 2: Qualitative assessment of trends.</li>
+                            <li>Factor 3: Future projections and scalability.</li>
+                        </ul>
+                        
+                        <h3>Conclusion</h3>
+                        <p>In summary, ${topic} represents a critical area of study. Further research is recommended to fully understand the long-term implications.</p>
+                        <br>
+                        <small style="color:#b43e8f;">Generated by Dfamo AI • ${new Date().toLocaleDateString()}</small>
+                    `;
+
+                    requestAnimationFrame(() => {
+                        previewEmpty.classList.add('hidden');
+                        previewContent.innerHTML = generatedHTML;
+                        previewContent.classList.remove('hidden');
+                        actionButtons.classList.remove('hidden');
+                        
+                        if(window.innerWidth < 768) {
+                            previewContent.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        }
+                    });
+
+                } catch (err) {
+                    showError("Error generating content.");
+                } finally {
+                    setLoading(false);
+                }
+            };
+
+            form.addEventListener('submit', generateDocument);
+            
+            // Ctrl+Enter Shortcut
+            promptInput.addEventListener('keydown', (e) => {
+                if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') generateDocument(e);
+            });
+
+            // Clear Button
+            clearBtn.addEventListener('click', () => {
+                requestAnimationFrame(() => {
+                    promptInput.value = '';
+                    charCount.textContent = '0 chars';
+                    previewContent.innerHTML = '';
+                    previewContent.classList.add('hidden');
+                    previewEmpty.classList.remove('hidden');
+                    actionButtons.classList.add('hidden');
+                    promptInput.focus();
+                });
+            });
+
+            // Copy to Clipboard
+            copyBtn.addEventListener('click', () => {
+                const text = previewContent.innerText;
+                navigator.clipboard.writeText(text).then(() => {
+                    const originalIcon = copyBtn.innerHTML;
+                    copyBtn.innerHTML = '<i class="fa-solid fa-check text-green-400"></i>';
+                    setTimeout(() => { copyBtn.innerHTML = originalIcon; }, 2000);
+                });
+            });
+
+            // Download PDF
+            downloadBtn.addEventListener('click', () => {
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+                
+                doc.setFont("helvetica");
+                doc.setFontSize(16);
+                doc.setTextColor(59, 0, 134);
+                doc.text("Dfamo AI Generation", 20, 20);
+                
+                doc.setFontSize(10);
+                doc.setTextColor(100);
+                doc.text(`Topic: ${promptInput.value.substring(0, 30)}...`, 20, 28);
+                
+                doc.setFontSize(12);
+                doc.setTextColor(0, 0, 0);
+                
+                const text = previewContent.innerText;
+                const splitText = doc.splitTextToSize(text, 170);
+                doc.text(splitText, 20, 40);
+                
+                doc.save('Dfamo-Doc.pdf');
+            });
+
+            // Helper Functions
+            function setLoading(isLoading) {
+                if (isLoading) {
+                    generateBtn.disabled = true;
+                    btnText.textContent = "Working Magic...";
+                    btnLoader.classList.remove('hidden');
+                    generateBtn.classList.add('opacity-75', 'cursor-not-allowed');
+                } else {
+                    generateBtn.disabled = false;
+                    btnText.textContent = "Generate Document";
+                    btnLoader.classList.add('hidden');
+                    generateBtn.classList.remove('opacity-75', 'cursor-not-allowed');
+                }
+            }
+
+            function showError(msg) {
+                errorContainer.classList.remove('hidden');
+                document.getElementById('error-message').textContent = msg;
+                setTimeout(() => errorContainer.classList.add('hidden'), 5000);
+            }
+            function hideError() { errorContainer.classList.add('hidden'); }
+        });
+    </script>
 </body>
 </html>
