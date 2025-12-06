@@ -1,617 +1,140 @@
-<html lang="en"><head>
+<!DOCTYPE html>
+<html lang="en">
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dfamo - AI PDF-Assignments/PDF-Notes Maker</title>
+    <title>Dfamo - AI PDF Generator</title>
+    <link rel="stylesheet" href="styles.css">
 
+    <!-- jsPDF Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
-            background: linear-gradient(135deg, #1f2937 0%, #000000 50%, #374151 100%);
-            background-size: 200% 200%;
-            animation: gradient 15s ease infinite;
-            min-height: 100vh;
-            color: #ffffff;
-        }
-
-        @keyframes gradient {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem 1rem;
-        }
-
-        header {
-            text-align: center;
-            margin-bottom: 3rem;
-        }
-
-        .header-content {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 1rem;
-            margin-bottom: 1rem;
-        }
-
-        .icon {
-            width: 48px;
-            height: 48px;
-            color: #9ca3af;
-        }
-
-        h1 {
-            font-size: 3.5rem;
-            font-weight: bold;
-            color: #ffffff;
-            margin: 0;
-        }
-
-        .subtitle {
-            font-size: 1rem;
-            color: #9ca3af;
-            font-weight: 500;
-        }
-
-        .tagline {
-            font-size: 1.125rem;
-            color: #9ca3af;
-            max-width: 42rem;
-            margin: 0 auto;
-        }
-
-        .error-message {
-            background-color: rgba(127, 29, 29, 0.2);
-            border: 1px solid rgba(239, 68, 68, 0.5);
-            border-radius: 0.5rem;
-            padding: 1rem;
-            color: #f87171;
-            text-align: center;
-            margin-bottom: 1.5rem;
-        }
-
-        .grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 2rem;
-        }
-
-        @media (min-width: 1024px) {
-            .grid {
-                grid-template-columns: 1fr 1fr;
-            }
-        }
-
-        .card {
-            background-color: #111827;
-            border: 1px solid #1f2937;
-            border-radius: 0.75rem;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-            padding: 2rem;
-        }
-
-        .card-title {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #ffffff;
-            margin-bottom: 1.5rem;
-        }
-
-        label {
-            display: block;
-            font-size: 0.875rem;
-            font-weight: 500;
-            color: #d1d5db;
-            margin-bottom: 0.5rem;
-        }
-
-        textarea {
-            width: 100%;
-            padding: 0.75rem 1rem;
-            background-color: #1f2937;
-            border: 1px solid #374151;
-            color: #ffffff;
-            border-radius: 0.5rem;
-            font-size: 1rem;
-            font-family: inherit;
-            resize: none;
-            transition: all 0.2s;
-        }
-
-        textarea::placeholder {
-            color: #6b7280;
-        }
-
-        textarea:focus {
-            outline: none;
-            border-color: #4b5563;
-            box-shadow: 0 0 0 3px rgba(75, 85, 99, 0.3);
-        }
-
-        .btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            width: 100%;
-            padding: 0.75rem 1.5rem;
-            font-size: 1rem;
-            font-weight: 500;
-            border: none;
-            border-radius: 0.5rem;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-family: inherit;
-        }
-
-        .btn-primary {
-            background-color: #374151;
-            color: #ffffff;
-            margin-top: 1.5rem;
-        }
-
-        .btn-primary:hover:not(:disabled) {
-            background-color: #4b5563;
-        }
-
-        .btn-primary:disabled {
-            background-color: #1f2937;
-            cursor: not-allowed;
-            opacity: 0.5;
-        }
-
-        .btn-small {
-            width: auto;
-            padding: 0.5rem 1rem;
-            font-size: 0.875rem;
-        }
-
-        .btn-secondary {
-            background-color: #374151;
-            color: #ffffff;
-        }
-
-        .btn-secondary:hover {
-            background-color: #4b5563;
-        }
-
-        .btn-tertiary {
-            background-color: #1f2937;
-            color: #d1d5db;
-        }
-
-        .btn-tertiary:hover {
-            background-color: #374151;
-        }
-
-        .preview-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 1.5rem;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
-
-        .button-group {
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        .preview-content {
-            border: 1px solid #1f2937;
-            border-radius: 0.5rem;
-            padding: 1.5rem;
-            background-color: #000000;
-            max-height: 600px;
-            overflow-y: auto;
-        }
-
-        .preview-content::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        .preview-content::-webkit-scrollbar-track {
-            background: #1f2937;
-            border-radius: 4px;
-        }
-
-        .preview-content::-webkit-scrollbar-thumb {
-            background: #374151;
-            border-radius: 4px;
-        }
-
-        .preview-content::-webkit-scrollbar-thumb:hover {
-            background: #4b5563;
-        }
-
-        .empty-state {
-            text-align: center;
-            color: #4b5563;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 400px;
-        }
-
-        .empty-icon {
-            width: 80px;
-            height: 80px;
-            opacity: 0.3;
-            margin: 0 auto 1rem;
-        }
-
-
-        .content h2 {
-            font-size: 1.25rem;
-            font-weight: bold;
-            color: #e5e7eb;
-            margin: 1rem 0 0.75rem 0;
-        }
-
-        .content h3 {
-            font-size: 1.125rem;
-            font-weight: 600;
-            color: #d1d5db;
-            margin: 0.75rem 0 0.5rem 0;
-        }
-
-        .content p {
-            color: #9ca3af;
-            margin-bottom: 0.5rem;
-            line-height: 1.75;
-        }
-
-        .content-divider {
-            margin-top: 2rem;
-            padding-top: 1rem;
-            border-top: 1px solid #374151;
-        }
-
-        .signature {
-            font-size: 0.875rem;
-            color: #6b7280;
-            font-style: italic;
-            text-align: center;
-        }
-
-        footer {
-            margin-top: 3rem;
-            text-align: center;
-            color: #6b7280;
-            font-size: 0.875rem;
-        }
-
-        .spinner {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            border-top-color: #ffffff;
-            animation: spin 1s ease-in-out infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        .spacer {
-            height: 1rem;
-        }
-
-        @media (max-width: 640px) {
-            h1 {
-                font-size: 2rem;
-            }
-
-            .card {
-                padding: 1rem;
-            }
-
-            .preview-content {
-                max-height: 400px;
-            }
-        }
-
+        /* ——————————————————— GLOBAL FIX ——————————————————— */
         .hidden {
-            display: none;
+            display: none !important;
         }
-h1 {        
-  background: linear-gradient(180deg, #ffffff, #aaaaaa);
-  background-clip: text;
-  background-clip: text;
-  text-fill-color: transparent;
-  color: transparent;
-    text-shadow: 0 0 2px #fff,
-               0 0 10px #fff,
-               0 0 30px #fff,
-               0 0 30px #a0a3a2,
-               0 0 62px #a0a3a2,
-               0 0 72px #a0a3a2;
-  font-size: 70px;             
-  }
+
+        /* ——————————————————— ALL EXISTING CSS KEPT SAME ——————————————————— */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: #0a0a0f; color: #fff; min-height: 100vh; overflow-x: hidden; }
+        .bg-pattern { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0;
+            background: radial-gradient(circle at 20% 50%, rgba(120,119,198,.15) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 80%, rgba(147,51,234,.15) 0%, transparent 50%),
+                        radial-gradient(circle at 40% 20%, rgba(59,130,246,.1) 0%, transparent 50%); }
+        .grid-overlay { position: fixed; inset: 0; z-index: 0;
+            background-image: linear-gradient(rgba(255,255,255,.02) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(255,255,255,.02) 1px, transparent 1px);
+            background-size: 50px 50px; animation: gridMove 20s linear infinite; }
+        @keyframes gridMove { 0% { transform: translate(0,0); } 100% { transform: translate(50px,50px); } }
+
+        .container { position: relative; z-index: 1; max-width: 1400px; margin: auto; padding: 2rem; }
+
+        .back-btn { position: absolute; top: 0; left: 0; padding: 12px 22px; border-radius: 12px; 
+            background: linear-gradient(135deg,#6366f1,#8b5cf6); border: none; color: #fff; cursor: pointer; }
+
+        header { text-align: center; margin-bottom: 4rem; }
+
+        .logo-section { padding: 2rem; border-radius: 24px; background: rgba(255,255,255,.02); backdrop-filter: blur(20px); display: inline-block; }
+
+        h1 { font-size: 5rem; font-weight: 900;
+            background: linear-gradient(135deg,#fff,#a78bfa,#ec4899);
+            -webkit-background-clip: text; color: transparent; animation: glow 2s infinite alternate; }
+
+        @keyframes glow { from { filter: drop-shadow(0 0 20px rgba(167,139,250,.5)); } to { filter: drop-shadow(0 0 40px rgba(236,72,153,.7)); } }
+
+        .subtitle { font-size: 1.25rem; color: #a78bfa; margin-top: 10px; }
+        .tagline { margin-top: 1.5rem; color: #9ca3af; max-width: 600px; margin-inline: auto; }
+
+        .main-grid { display: grid; gap: 2rem; }
+        @media (min-width:1024px) {
+            .main-grid { grid-template-columns: 1fr 1.2fr; }
+        }
+
+        .card { padding: 2rem; background: rgba(17,24,39,.6); backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,.1); border-radius: 24px; }
+
+        .card-title { font-size: 1.75rem; background: linear-gradient(135deg,#fff,#a78bfa);
+            -webkit-background-clip: text; color: transparent; }
+
+        textarea { width: 100%; padding: 1rem; border-radius: 16px; background: rgba(31,41,55,.6);
+            border: 2px solid rgba(255,255,255,.1); color: #fff; height: 200px; }
+
+        .btn { padding: 1rem; border-radius: 16px; font-weight: bold; cursor: pointer; border: none; width: 100%; margin-top: 1rem; }
+        .btn-primary { background: linear-gradient(135deg,#6366f1,#8b5cf6); color: #fff; }
+        .btn-secondary { background: linear-gradient(135deg,#10b981,#059669); color: #fff; }
+        .btn-tertiary { background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.2); color: #ccc; }
+
+        /* Preview Content */
+        .preview-content { margin-top: 1rem; padding: 1.5rem; border-radius: 16px; background: rgba(0,0,0,.4); max-height: 600px; overflow-y: auto; }
+        .content h1 { font-size: 2rem; margin-bottom: .5rem; }
+        .content h2 { font-size: 1.5rem; margin: 1rem 0 .5rem; }
+        .content h3 { font-size: 1.25rem; margin: .75rem 0 .5rem; }
+        .content p { line-height: 1.8; color: #cbd5e1; }
+
+        .signature { font-size: .9rem; font-style: italic; text-align: center; margin-top: 2rem; color: #a78bfa; }
     </style>
 </head>
+
 <body>
-    <div class="container">
-        <header>
-            <div class="header-content">
-                
-                <div>
-                    <h1 class="neon-gradient" align="center">Dfamo</h1>
-                    <p class="subtitle" align="center">AI PDF-Assignment/PDF-Notes Maker</p>
-                </div>
-                <br>
-                <br>
-                
-            </div>
-  <button onclick="window.location.href='https://dfamo.co.uk/'" class="back-btn">
-  ⬅︎
-  </button>
-</header></div>
 
-<style>
-  .back-btn {
-    background: linear-gradient(135deg, #00b4d8, #0077b6);
-    color: #fff;
-    font-weight: 600;
-    font-size: 1.05rem;
-    padding: 12px 28px;
-    border: none;
-    border-radius: 12px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 12px rgba(0, 183, 255, 0.4);
-    backdrop-filter: blur(6px);
-  }
+<div class="bg-pattern"></div>
+<div class="grid-overlay"></div>
 
-  .back-btn:hover {
-    background: linear-gradient(135deg, #0077b6, #00b4d8);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 18px rgba(0, 183, 255, 0.6);
-  }
+<div class="container">
+    <button onclick="window.location.href='https://dfamo.co.uk/'" class="back-btn">← Back</button>
 
-  .back-btn:active {
-    transform: scale(0.97);
-  }
-    </style>
-        
+    <header>
+        <div class="logo-section">
+            <h1>Dfamo</h1>
+            <p class="subtitle">AI PDF Generator</p>
+        </div>
+        <p class="tagline">Transform your ideas into professional PDF assignments and notes instantly</p>
+    </header>
 
-        <div id="error-container" class="hidden">
-            <div class="error-message" id="error-message"></div>
+    <!-- Error -->
+    <div id="error-container" class="hidden">
+        <div class="error-message" id="error-message"></div>
+    </div>
+
+    <div class="main-grid">
+
+        <!-- LEFT SIDE -->
+        <div class="card">
+            <h2 class="card-title">Create Your Document</h2>
+
+            <form id="assignment-form">
+                <label>Topic or Instructions</label>
+                <textarea id="prompt" required></textarea>
+
+                <button type="submit" class="btn btn-primary" id="generate-btn">
+                    <span id="btn-text">Generate Document</span>
+                </button>
+            </form>
         </div>
 
-        <div class="grid">
-            <div class="card">
-                <h2 class="card-title" align="center">Enter Your Topic</h2>
-                <form id="assignment-form">
-                    <div>
-                        <label for="prompt" align="center">Assignment Topic or Instructions</label>
-                        <textarea id="prompt" rows="8" placeholder="e.g., Write an assignment about the Pythagorean Theorem for grade 9 students" required=""></textarea>
-                    </div>
-                    <button type="submit" class="btn btn-primary" id="generate-btn">
-                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
-                        </svg>
-                        <span id="btn-text">Generate Assignment</span>
-                    </button>
-                </form>
+        <!-- RIGHT SIDE -->
+        <div class="card">
+            <h2 class="card-title">Preview</h2>
+
+            <div class="button-group hidden" id="action-buttons">
+                <button class="btn btn-secondary" id="download-btn">Download PDF</button>
+                <button class="btn btn-tertiary" id="clear-btn">Clear</button>
             </div>
 
-            <div class="card">
-                <div class="preview-header">
-                    <h2 class="card-title" style="margin-bottom: 0;">Preview</h2>
-                    <div class="button-group" id="action-buttons" style="display: none;">
-                        <button class="btn btn-small btn-secondary" id="download-btn">
-                            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
-                            </svg>
-                            <span>Download</span>
-                        </button>
-                        <button class="btn btn-small btn-tertiary" id="clear-btn">Clear</button>
-                    </div>
-                </div>
-                <div class="preview-content">
-                    <div id="preview-empty" class="empty-state">
-                        <div>
-                            <svg class="empty-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
-                            </svg>
-                            <p>Your generated assignment will appear here</p>
-                        </div>
-                    </div>
-                    <div id="preview-content" class="content hidden"></div>
-                </div>
+            <div class="preview-content">
+                <div id="preview-empty">Your generated document will appear here</div>
+                <div id="preview-content" class="content hidden"></div>
             </div>
         </div>
+    </div>
 
-        <footer>
-            <p>Created by Aryansh Rai</p>
-        </footer>
-    
+    <footer><p>Powered by Dfamo AI • Created by Aryansh Rai</p></footer>
 
-    <script>
-        const GUIDELINES = `You are DfamoAI — a professional academic writing and formatting assistant that creates high-quality, well-structured assignments ready for direct PDF export.
+</div>
 
-When the user provides a topic or instructions:
-1. Generate a full academic-style assignment with the following sections:
-   - Title Page
-   - Introduction
-   - Main Sections (with headings and subheadings)
-   - Conclusion
-   - References (at least 3 credible academic sources)
-2. Write in clear, formal, academic English with perfect grammar and logical flow.
-3. Include explanations, examples, and detailed paragraphs under each section.
-   The goal is to produce a complete, educational, and informative assignment.
-4. Format the entire response in **Markdown** ONLY (no code blocks, no JSON).
-5. Use Markdown symbols for structure:
-   - # for title
-   - ## for main sections
-   - ### for subheadings
-   - Bullet points and numbered lists where appropriate
-6. Do not include any meta text like:
-   - "Here's your assignment"
-   - "Here's the detailed PDF context"
-   - "Below is your content"
-   - "Generated output:"
-7. The response must begin directly with the assignment's title.
-8. Always end with this signature line exactly:
+<!-- Connect external JS -->
+<script src="pdfworker.js"></script>
 
-   ---
-   *Generated by **DfamoAI** – Your Academic Writing Partner*
-`;
-
-        let generatedContent = '';
-
-        const form = document.getElementById('assignment-form');
-        const promptInput = document.getElementById('prompt');
-        const generateBtn = document.getElementById('generate-btn');
-        const btnText = document.getElementById('btn-text');
-        const downloadBtn = document.getElementById('download-btn');
-        const clearBtn = document.getElementById('clear-btn');
-        const actionButtons = document.getElementById('action-buttons');
-        const previewEmpty = document.getElementById('preview-empty');
-        const previewContent = document.getElementById('preview-content');
-        const errorContainer = document.getElementById('error-container');
-        const errorMessage = document.getElementById('error-message');
-
-        async function generateAssignment(prompt) {
-            const fullPrompt = `${GUIDELINES}\n\nUser request: ${prompt}`;
-            const encodedPrompt = encodeURIComponent(fullPrompt);
-            const url = `https://text.pollinations.ai/${encodedPrompt}`;
-
-            const response = await fetch(url, { method: 'GET' });
-
-            if (!response.ok) {
-                throw new Error(`API request failed with status ${response.status}`);
-            }
-
-            const text = await response.text();
-
-            if (!text || text.trim().length === 0) {
-                throw new Error('Empty response from API');
-            }
-
-            return text;
-        }
-
-        function renderContent(content) {
-            const lines = content.split('\n');
-            let html = '';
-
-            for (const line of lines) {
-                if (!line.trim()) {
-                    html += '<div class="spacer"></div>';
-                    continue;
-                }
-
-                if (line.startsWith('# ')) {
-                    html += `<h1>${line.replace(/^#\s*/, '')}</h1>`;
-                } else if (line.startsWith('## ')) {
-                    html += `<h2>${line.replace(/^##\s*/, '')}</h2>`;
-                } else if (line.startsWith('### ')) {
-                    html += `<h3>${line.replace(/^###\s*/, '')}</h3>`;
-                } else {
-                    html += `<p>${line.trim()}</p>`;
-                }
-            }
-
-            html += '<div class="content-divider"><p class="signature">Generated by <strong>DfamoAI</strong> – Your Academic Writing Partner</p></div>';
-
-            return html;
-        }
-
-        function generatePDF(content) {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-
-            const pageWidth = doc.internal.pageSize.getWidth();
-            const pageHeight = doc.internal.pageSize.getHeight();
-            const margin = 20;
-            const maxWidth = pageWidth - 2 * margin;
-            let yPosition = margin;
-
-            const contentLines = content.split('\n');
-
-            for (const line of contentLines) {
-                if (yPosition > pageHeight - margin - 10) {
-                    doc.addPage();
-                    yPosition = margin;
-                }
-
-                if (!line.trim()) {
-                    yPosition += 5;
-                    continue;
-                }
-
-                if (line.startsWith('# ')) {
-                    doc.setFont('helvetica', 'bold');
-                    doc.setFontSize(20);
-                    const cleanLine = line.replace(/^#\s*/, '');
-                    const wrappedLines = doc.splitTextToSize(cleanLine, maxWidth);
-                    doc.text(wrappedLines, margin, yPosition);
-                    yPosition += wrappedLines.length * 10 + 8;
-                    doc.setFont('helvetica', 'normal');
-                    doc.setFontSize(12);
-                } else if (line.startsWith('## ')) {
-                    doc.setFont('helvetica', 'bold');
-                    doc.setFontSize(16);
-                    const cleanLine = line.replace(/^##\s*/, '');
-                    const wrappedLines = doc.splitTextToSize(cleanLine, maxWidth);
-                    doc.text(wrappedLines, margin, yPosition);
-                    yPosition += wrappedLines.length * 8 + 6;
-                    doc.setFont('helvetica', 'normal');
-                    doc.setFontSize(12);
-                } else if (line.startsWith('### ')) {
-                    doc.setFont('helvetica', 'bold');
-                    doc.setFontSize(14);
-                    const cleanLine = line.replace(/^###\s*/, '');
-                    const wrappedLines = doc.splitTextToSize(cleanLine, maxWidth);
-                    doc.text(wrappedLines, margin, yPosition);
-                    yPosition += wrappedLines.length * 7 + 5;
-                    doc.setFont('helvetica', 'normal');
-                    doc.setFontSize(12);
-                } else if (line.startsWith('---')) {
-                    doc.setLineWidth(0.5);
-                    doc.line(margin, yPosition, pageWidth - margin, yPosition);
-                    yPosition += 8;
-                } else if (line.includes('**') || line.includes('*')) {
-                    const cleanLine = line.replace(/\*\*/g, '').replace(/\*/g, '');
-                    doc.setFont('helvetica', 'bold');
-                    const wrappedLines = doc.splitTextToSize(cleanLine, maxWidth);
-                    doc.text(wrappedLines, margin, yPosition);
-                    yPosition += wrappedLines.length * 6 + 3;
-                    doc.setFont('helvetica', 'normal');
-                } else {
-                    doc.setFontSize(11);
-                    const wrappedLines = doc.splitTextToSize(line.trim(), maxWidth);
-                    doc.text(wrappedLines, margin, yPosition);
-                    yPosition += wrappedLines.length * 6 + 3;
-                }
-            }
-
-            const fileName = `assignment_${Date.now()}.pdf`;
-            doc.save(fileName);
-        }
-
-        function showError(message) {
-            errorMessage.textContent = message;
-            errorContainer.classList.remove('hidden');
-            setTimeout(() => {
-                errorContainer.classList.add('hidden');
-            }, 5000);
-        }
-
-        f</script></body></html>
+</body>
+</html>
