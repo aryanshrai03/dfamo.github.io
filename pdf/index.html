@@ -29,6 +29,15 @@
                     fontFamily: {
                         sans: ['Montserrat', 'sans-serif'],
                     },
+                    animation: {
+                        'fade-in-up': 'fadeInUp 0.8s ease-out forwards',
+                    },
+                    keyframes: {
+                        fadeInUp: {
+                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        }
+                    }
                 }
             }
         }
@@ -37,10 +46,10 @@
     <style>
         body { background-color: #290628; color: #ffffff; overflow-x: hidden; }
         html { scroll-padding-top: 100px; }
-        .grid-overlay { position: fixed; inset: 0; z-index: -1; background-image: linear-gradient(rgba(234, 122, 244, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(234, 122, 244, 0.03) 1px, transparent 1px); background-size: 40px 40px; animation: gridMove 60s linear infinite; pointer-events: none; }
+        .grid-overlay { position: fixed; inset: 0; z-index: -1; background-image: linear-gradient(rgba(234, 122, 244, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(234, 122, 244, 0.03) 1px, transparent 1px); background-size: 40px 40px; animation: gridMove 60s linear infinite; pointer-events: none; will-change: transform; }
         @keyframes gridMove { 0% { transform: translate(0, 0); } 100% { transform: translate(40px, 40px); } }
-        .glass-panel { background: rgba(41, 6, 40, 0.65); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.08); box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2); }
-        .glass-pill { background: rgba(59, 0, 134, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.15); }
+        .glass-panel { background: rgba(41, 6, 40, 0.65); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.08); box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2); transition: transform 0.3s ease, box-shadow 0.3s ease; }
+        .glass-pill { background: rgba(59, 0, 134, 0.95); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(234, 122, 244, 0.3); box-shadow: 0 0 15px rgba(98, 0, 179, 0.4); }
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #1a0419; }
         ::-webkit-scrollbar-thumb { background: #6200b3; border-radius: 4px; }
@@ -53,9 +62,13 @@
         .content p { color: #9ca3af; margin-bottom: 0.75rem; line-height: 1.8; }
         .content ul, .content ol { color: #9ca3af; margin-left: 1.5rem; margin-bottom: 0.75rem; }
         .content li { margin-bottom: 0.5rem; line-height: 1.6; }
+        .reveal-on-scroll { opacity: 0; transform: translateY(30px); transition: all 0.8s ease-out; }
+        .reveal-on-scroll.visible { opacity: 1; transform: translateY(0); }
+        *:focus-visible { outline: 2px solid #ea7af4; outline-offset: 2px; }
+        .modal-overlay { background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); }
     </style>
 </head>
-<body class="antialiased">
+<body class="antialiased selection:bg-violet selection:text-white">
 
     <div class="grid-overlay"></div>
     <div class="fixed top-0 left-0 w-full h-full pointer-events-none z-[-2] overflow-hidden">
@@ -63,79 +76,132 @@
         <div class="absolute bottom-[-10%] left-[-10%] w-[500px] h-[500px] bg-fandango rounded-full mix-blend-screen filter blur-[100px] opacity-20"></div>
     </div>
 
-    <!-- Navigation -->
-    <nav class="fixed top-4 md:top-6 left-0 right-0 z-50 flex justify-center px-4">
-        <div class="glass-pill rounded-full px-4 md:px-6 py-3 flex items-center justify-between gap-4 shadow-2xl w-full max-w-[95%] md:max-w-max">
-            <a href="#" class="flex items-center gap-2">
-                <span class="font-bold text-lg bg-clip-text text-transparent bg-gradient-to-r from-violet to-fandango">Dfamo</span>
+    <!-- FIXED HEADER -->
+    <!-- Used pointer-events-none on wrapper to allow clicking through the sides, auto on the pill -->
+    <nav class="fixed top-4 md:top-6 left-0 right-0 z-50 flex justify-center w-full pointer-events-none">
+        
+        <!-- The Pill: Width fits content on Desktop, 90% on Mobile -->
+        <div class="glass-pill rounded-full px-5 py-3 pointer-events-auto flex items-center justify-between w-[90%] md:w-auto md:gap-12 transition-all duration-300">
+            
+            <!-- Logo -->
+            <a href="#" class="flex items-center gap-2 group shrink-0" aria-label="Dfamo Home">
+                <span class="font-bold text-xl bg-clip-text text-transparent bg-gradient-to-r from-violet to-white group-hover:to-fandango transition-all">Dfamo</span>
             </a>
-            <div class="hidden md:flex items-center gap-6 text-xs font-bold uppercase text-gray-300">
-                <a href="#tool-section" class="hover:text-violet transition-colors">Tool</a>
-                <a href="#features" class="hover:text-violet transition-colors">Features</a>
+            
+            <!-- Desktop Menu (Hidden on Mobile) -->
+            <div class="hidden md:flex items-center gap-6 text-xs font-bold uppercase text-white tracking-wide">
+                <a href="#tool-section" class="hover:text-violet transition-colors py-2">Tool</a>
+                <a href="#features" class="hover:text-violet transition-colors py-2">Features</a>
+                <a href="#reviews" class="hover:text-violet transition-colors py-2">Reviews</a>
+                <button onclick="toggleShortcuts()" class="hover:text-violet transition-colors py-2 flex items-center gap-1" aria-label="Shortcuts">
+                    <i class="fa-regular fa-keyboard text-lg"></i>
+                </button>
             </div>
+
+            <!-- Mobile Menu Button (Visible on Mobile) -->
+            <button id="mobile-menu-btn" class="md:hidden text-white text-xl p-1 focus:text-violet transition-colors block" aria-label="Toggle Mobile Menu">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </div>
+
+        <!-- Mobile Menu Dropdown (Absolute position relative to nav wrapper) -->
+        <div id="mobile-menu" class="hidden absolute top-16 w-[90%] glass-panel rounded-2xl p-4 flex-col gap-2 text-center text-sm font-bold z-50 pointer-events-auto">
+            <a href="#tool-section" class="block py-3 hover:bg-white/5 rounded-lg text-gray-200">Tool</a>
+            <a href="#features" class="block py-3 hover:bg-white/5 rounded-lg text-gray-200">Features</a>
+            <a href="#reviews" class="block py-3 hover:bg-white/5 rounded-lg text-gray-200">Reviews</a>
+            <button onclick="toggleShortcuts()" class="w-full py-3 hover:bg-white/5 rounded-lg text-violet">Keyboard Shortcuts</button>
         </div>
     </nav>
 
     <!-- Hero -->
-    <header class="relative pt-32 md:pt-44 pb-12 px-4 text-center">
-        <div class="max-w-4xl mx-auto">
-            <h1 class="text-4xl md:text-7xl font-black mb-6">
+    <header class="relative pt-32 md:pt-48 pb-12 px-4 text-center">
+        <div class="max-w-4xl mx-auto reveal-on-scroll visible">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs text-violet mb-6 font-bold uppercase tracking-wider">
+                <span class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span> v2.0 Live
+            </div>
+            <h1 class="text-4xl md:text-7xl font-black mb-6 leading-tight">
                 Homework Done in <br>
                 <span class="bg-clip-text text-transparent bg-gradient-to-r from-violet via-fandango to-grape">Seconds ⚡</span>
             </h1>
-            <p class="text-base md:text-xl text-gray-300 max-w-2xl mx-auto mb-10">
-                Smart AI Solutions for students. Create essays and notes instantly. No login required.
+            <p class="text-base md:text-xl text-gray-300 max-w-2xl mx-auto mb-10 leading-relaxed">
+                Smart AI Solutions for students. Create essays, reports, and notes instantly. <br class="hidden md:block">Optimized for academic tone. No login required.
             </p>
-            <a href="#tool-section" class="inline-block px-8 py-4 bg-gradient-to-r from-violet to-grape rounded-xl font-bold text-white shadow-lg hover:scale-105 transition-transform">
-                Start Generating <i class="fa-solid fa-wand-magic-sparkles"></i>
-            </a>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                <a href="#tool-section" class="px-8 py-4 bg-gradient-to-r from-violet to-grape rounded-xl font-bold text-white shadow-lg hover:scale-105 transition-transform hover:shadow-violet/50 w-full sm:w-auto">
+                    Start Generating <i class="fa-solid fa-wand-magic-sparkles ml-2"></i>
+                </a>
+                <button onclick="toggleGuide()" class="px-8 py-4 bg-white/5 border border-white/10 rounded-xl font-bold text-white hover:bg-white/10 transition-colors w-full sm:w-auto">
+                    <i class="fa-solid fa-circle-info mr-2"></i> How it works
+                </button>
+            </div>
         </div>
     </header>
 
     <!-- Tool Section -->
-    <main id="tool-section" class="container mx-auto max-w-7xl px-4 py-8 md:py-12">
+    <main id="tool-section" class="container mx-auto max-w-7xl px-4 py-8 md:py-12 scroll-mt-24">
         <div class="flex flex-col lg:grid lg:grid-cols-[1fr_1.2fr] gap-6 md:gap-8">
             
             <!-- Input Panel -->
-            <div class="glass-panel p-6 md:p-8 rounded-3xl relative overflow-hidden flex flex-col">
+            <div class="glass-panel p-6 md:p-8 rounded-3xl relative overflow-hidden flex flex-col transition-all hover:border-violet/30 group">
                 <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-violet to-grape"></div>
                 
-                <div class="flex justify-between items-center mb-6">
+                <div class="flex justify-between items-center mb-4">
                     <h2 class="text-xl md:text-2xl font-bold flex items-center gap-3">
                         <span class="w-8 h-8 rounded-lg bg-violet/20 flex items-center justify-center text-violet"><i class="fa-solid fa-pen-nib"></i></span>
                         Input
                     </h2>
-                    <span id="char-count" class="text-xs text-gray-500">0 chars</span>
+                    <span id="char-count" class="text-xs text-gray-500 font-mono">0 chars</span>
                 </div>
                 
                 <form id="assignment-form" class="space-y-4 flex-grow flex flex-col">
+                    
                     <!-- Advanced Controls -->
                     <div class="grid grid-cols-2 gap-3 mb-2">
-                        <select id="tone-select" class="bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-gray-300 focus:border-violet outline-none">
-                            <option value="Standard">Standard Tone</option>
-                            <option value="Academic">Academic / Formal</option>
-                            <option value="Creative">Creative / Story</option>
-                            <option value="Simple">Simple English</option>
-                        </select>
-                        <select id="lang-select" class="bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-gray-300 focus:border-violet outline-none">
-                            <option value="English">English (US)</option>
-                            <option value="UK">English (UK)</option>
-                            <option value="Spanish">Spanish</option>
-                            <option value="French">French</option>
-                            <option value="Hindi">Hindi / हिन्दी</option>
-                        </select>
+                        <div>
+                            <label for="tone-select" class="sr-only">Select Tone</label>
+                            <select id="tone-select" class="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-3 text-sm text-gray-300 focus:border-violet focus:ring-1 focus:ring-violet outline-none transition-colors cursor-pointer hover:bg-white/10">
+                                <option value="Standard">Standard Tone</option>
+                                <option value="Academic">Academic / Formal</option>
+                                <option value="Creative">Creative / Story</option>
+                                <option value="Simple">Simple English</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="lang-select" class="sr-only">Select Language</label>
+                            <select id="lang-select" class="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-3 text-sm text-gray-300 focus:border-violet focus:ring-1 focus:ring-violet outline-none transition-colors cursor-pointer hover:bg-white/10">
+                                <option value="English">English (US)</option>
+                                <option value="UK">English (UK)</option>
+                                <option value="Spanish">Spanish</option>
+                                <option value="French">French</option>
+                                <option value="Hindi">Hindi / हिन्दी</option>
+                            </select>
+                        </div>
                     </div>
 
-                    <textarea id="prompt" required placeholder="e.g., Write a 1000-word essay on Climate Change..." 
-                    class="w-full h-full min-h-[250px] bg-darker/50 border border-white/10 rounded-2xl p-4 text-white placeholder-gray-600 focus:outline-none focus:border-violet focus:ring-1 focus:ring-violet transition-all resize-none"></textarea>
+                    <!-- NEW: Demo / Sample Prompts -->
+                    <div class="flex flex-wrap gap-2 items-center text-xs pb-2">
+                        <span class="text-violet font-bold uppercase tracking-wide mr-1"><i class="fa-solid fa-bolt"></i> Quick Start:</span>
+                        <button type="button" class="sample-prompt px-3 py-1.5 rounded-full bg-white/5 hover:bg-violet/20 border border-white/10 hover:border-violet/40 transition-all text-gray-300" data-prompt="Write a 500-word essay on the causes of the French Revolution.">📜 History Essay</button>
+                        <button type="button" class="sample-prompt px-3 py-1.5 rounded-full bg-white/5 hover:bg-violet/20 border border-white/10 hover:border-violet/40 transition-all text-gray-300" data-prompt="Explain Quantum Entanglement in simple terms for a high school student.">⚛️ Physics Summary</button>
+                        <button type="button" class="sample-prompt px-3 py-1.5 rounded-full bg-white/5 hover:bg-violet/20 border border-white/10 hover:border-violet/40 transition-all text-gray-300" data-prompt="Write a cover letter for a Software Engineer internship.">💼 Cover Letter</button>
+                    </div>
 
-                    <button type="submit" id="generate-btn" class="w-full py-4 bg-gradient-to-r from-indigo to-grape hover:from-grape hover:to-fandango rounded-xl font-bold text-white shadow-lg transition-all active:scale-95 flex items-center justify-center gap-2">
+                    <div class="relative flex-grow">
+                        <textarea id="prompt" required placeholder="Describe your assignment here...&#10;e.g., 'Write a 1000-word essay on the impact of Climate Change on global economy'" 
+                        class="w-full h-full min-h-[200px] bg-darker/50 border border-white/10 rounded-2xl p-4 text-white placeholder-gray-600 focus:outline-none focus:border-violet focus:ring-1 focus:ring-violet transition-all resize-none leading-relaxed"></textarea>
+                        <div class="absolute bottom-4 right-4 text-xs text-gray-600 bg-darker/80 px-2 py-1 rounded pointer-events-none hidden md:block">
+                            Ctrl + Enter to run
+                        </div>
+                    </div>
+
+                    <button type="submit" id="generate-btn" class="w-full py-4 bg-gradient-to-r from-indigo to-grape hover:from-grape hover:to-fandango rounded-xl font-bold text-white shadow-lg transition-all active:scale-95 flex items-center justify-center gap-2 group-focus-within:shadow-violet/30">
                         <span id="btn-text">Generate Document</span>
                         <span id="btn-loader" class="hidden loader"></span>
                     </button>
                 </form>
 
-                <div id="error-container" class="hidden mt-4 p-4 bg-red-500/20 border border-red-500/50 rounded-xl text-red-200 text-sm">
+                <div id="error-container" class="hidden mt-4 p-4 bg-red-500/20 border border-red-500/50 rounded-xl text-red-200 text-sm flex items-start gap-2" role="alert">
+                    <i class="fa-solid fa-circle-exclamation mt-1"></i>
                     <div id="error-message"></div>
                 </div>
             </div>
@@ -147,91 +213,101 @@
                         <span class="w-8 h-8 rounded-lg bg-fandango/20 flex items-center justify-center text-fandango"><i class="fa-solid fa-eye"></i></span>
                         Preview
                     </h2>
-                    <div id="action-buttons" class="hidden flex gap-2 w-full sm:w-auto">
-                        <button id="copy-btn" class="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg text-sm font-bold transition-colors">
-                            <i class="fa-regular fa-copy"></i>
+                    <div id="action-buttons" class="hidden flex flex-wrap gap-2 w-full sm:w-auto">
+                        <button id="copy-btn" class="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg text-sm font-bold transition-colors flex items-center gap-2" aria-label="Copy to Clipboard">
+                            <i class="fa-regular fa-copy"></i> <span class="hidden sm:inline">Copy</span>
                         </button>
-                        <button id="download-btn" class="flex-1 sm:flex-none px-4 py-2 bg-green-600 hover:bg-green-500 rounded-lg text-sm font-bold transition-colors flex items-center justify-center gap-2">
+                        <button id="download-btn" class="flex-1 sm:flex-none px-4 py-2 bg-green-600 hover:bg-green-500 rounded-lg text-sm font-bold transition-colors flex items-center justify-center gap-2 text-white shadow-lg shadow-green-900/20" aria-label="Download PDF">
                             <i class="fa-solid fa-download"></i> PDF
                         </button>
-                        <button id="clear-btn" class="px-4 py-2 bg-red-500/20 hover:bg-red-500/40 text-red-200 rounded-lg text-sm transition-colors">
+                        <button id="clear-btn" class="px-4 py-2 bg-red-500/20 hover:bg-red-500/40 text-red-200 rounded-lg text-sm transition-colors" aria-label="Clear Content">
                             <i class="fa-solid fa-trash"></i>
                         </button>
                     </div>
                 </div>
 
-                <div class="flex-grow bg-darker/40 rounded-2xl p-4 md:p-8 border border-white/5 overflow-y-auto relative" style="max-height: 600px;">
-                    <div id="preview-empty" class="absolute inset-0 flex flex-col items-center justify-center text-gray-600">
-                        <i class="fa-regular fa-file-lines text-6xl mb-4"></i>
+                <div class="flex-grow bg-darker/40 rounded-2xl p-4 md:p-8 border border-white/5 overflow-y-auto relative custom-scroll" style="max-height: 600px;">
+                    <div id="preview-empty" class="absolute inset-0 flex flex-col items-center justify-center text-gray-600 pointer-events-none">
+                        <i class="fa-regular fa-file-lines text-6xl mb-4 opacity-50"></i>
                         <p>Your content will appear here</p>
                     </div>
-                    <div id="preview-content" class="content hidden"></div>
+                    <div id="preview-content" class="content hidden" tabindex="0" role="region" aria-label="Generated Content"></div>
                 </div>
             </div>
         </div>
     </main>
-<!-- Features Section -->
-    <section id="features" class="py-16 md:py-20 bg-black/20 reveal-on-scroll">
+
+    <!-- Features Section -->
+    <section id="features" class="py-16 md:py-24 bg-black/20">
         <div class="container mx-auto px-4 max-w-6xl">
-            <div class="text-center mb-12">
-                <h2 class="text-3xl md:text-4xl font-bold mb-4">Why use <span class="text-violet">Dfamo?</span></h2>
-                <p class="text-gray-400">Advanced features tailored for academic success.</p>
+            <div class="text-center mb-16 reveal-on-scroll">
+                <span class="text-violet font-bold tracking-widest uppercase text-xs">Features</span>
+                <h2 class="text-3xl md:text-4xl font-bold mt-2">Why use <span class="text-violet">Dfamo?</span></h2>
+                <p class="text-gray-400 mt-2">Advanced features tailored for academic success.</p>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div class="glass-panel p-6 rounded-2xl hover:border-violet/30 transition-colors group">
+                <div class="glass-panel p-6 rounded-2xl hover:border-violet/30 transition-all hover:-translate-y-2 group reveal-on-scroll">
                     <div class="w-12 h-12 bg-violet/20 rounded-full flex items-center justify-center text-violet mb-4 text-xl group-hover:scale-110 transition-transform"><i class="fa-solid fa-bolt"></i></div>
                     <h3 class="text-xl font-bold mb-2">Instant Generation</h3>
-                    <p class="text-gray-400 text-sm">Process prompts faster than you can blink. Optimized for low-latency responses using FoilAI Engine.</p>
+                    <p class="text-gray-400 text-sm leading-relaxed">Process prompts faster than you can blink. Optimized for low-latency responses using FoilAI Engine.</p>
                 </div>
-                <div class="glass-panel p-6 rounded-2xl hover:border-fandango/30 transition-colors group">
+                <div class="glass-panel p-6 rounded-2xl hover:border-fandango/30 transition-all hover:-translate-y-2 group reveal-on-scroll" style="transition-delay: 100ms;">
                     <div class="w-12 h-12 bg-fandango/20 rounded-full flex items-center justify-center text-fandango mb-4 text-xl group-hover:scale-110 transition-transform"><i class="fa-solid fa-file-pdf"></i></div>
                     <h3 class="text-xl font-bold mb-2">Professional PDF</h3>
-                    <p class="text-gray-400 text-sm">Convert generated text directly into a formatted, professional PDF ready for submission.</p>
+                    <p class="text-gray-400 text-sm leading-relaxed">Convert generated text directly into a formatted, professional PDF ready for submission.</p>
                 </div>
-                <div class="glass-panel p-6 rounded-2xl hover:border-grape/30 transition-colors group">
+                <div class="glass-panel p-6 rounded-2xl hover:border-grape/30 transition-all hover:-translate-y-2 group reveal-on-scroll" style="transition-delay: 200ms;">
                     <div class="w-12 h-12 bg-grape/20 rounded-full flex items-center justify-center text-grape mb-4 text-xl group-hover:scale-110 transition-transform"><i class="fa-solid fa-shield-halved"></i></div>
                     <h3 class="text-xl font-bold mb-2">No Login Required</h3>
-                    <p class="text-gray-400 text-sm">Privacy first. Use the tool immediately without accounts, emails, or data tracking.</p>
+                    <p class="text-gray-400 text-sm leading-relaxed">Privacy first. Use the tool immediately without accounts, emails, or data tracking.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Ad Space 2 (Middle) -->
-    <div class="container mx-auto max-w-5xl my-8 px-4">
-        <div class="w-full h-24 bg-black/20 border border-dashed border-white/10 rounded-lg flex flex-col items-center justify-center text-gray-500 text-xs">
+    <!-- Ad Space 2 -->
+    <div class="container mx-auto max-w-5xl my-8 px-4 reveal-on-scroll">
+        <div class="w-full h-24 bg-black/20 border border-dashed border-white/10 rounded-lg flex flex-col items-center justify-center text-gray-500 text-xs hover:border-white/20 transition-colors">
             <span class="mb-1 font-bold">ADVERTISEMENT</span>
             <span>Your Ad Here - Contact contact@dfamo.co.uk</span>
         </div>
     </div>
 
     <!-- STUDENT FEEDBACK SECTION -->
-    <section id="reviews" class="py-16 bg-white/5 reveal-on-scroll">
+    <section id="reviews" class="py-16 bg-white/5">
         <div class="container mx-auto px-4 max-w-6xl">
-            <h2 class="text-3xl font-bold mb-10 text-center">Student <span class="text-violet">Feedbacks</span></h2>
+            <div class="text-center mb-12 reveal-on-scroll">
+                <h2 class="text-3xl font-bold">Student <span class="text-violet">Feedback</span></h2>
+            </div>
             <div class="grid md:grid-cols-3 gap-6">
-                <div class="glass-panel p-6 rounded-xl relative">
+                <div class="glass-panel p-6 rounded-xl relative reveal-on-scroll">
                     <i class="fa-solid fa-quote-left absolute top-4 right-4 text-white/5 text-4xl"></i>
-                    <div class="flex text-yellow-400 mb-3 text-sm"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                    <div class="flex text-yellow-400 mb-3 text-sm" aria-label="5 stars">
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                    </div>
                     <p class="text-gray-300 italic mb-4 text-sm leading-relaxed">"Saved my life during finals week. The PDF generation is super clean and the academic tone selector is a game changer."</p>
                     <div class="flex items-center gap-3 mt-4">
                         <div class="w-8 h-8 rounded-full bg-violet/20 flex items-center justify-center text-xs font-bold text-violet">SJ</div>
                         <p class="font-bold text-sm text-white">Sarah J.</p>
                     </div>
                 </div>
-                <div class="glass-panel p-6 rounded-xl relative">
+                <div class="glass-panel p-6 rounded-xl relative reveal-on-scroll" style="transition-delay: 100ms;">
                     <i class="fa-solid fa-quote-left absolute top-4 right-4 text-white/5 text-4xl"></i>
-                    <div class="flex text-yellow-400 mb-3 text-sm"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                    <div class="flex text-yellow-400 mb-3 text-sm" aria-label="5 stars">
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                    </div>
                     <p class="text-gray-300 italic mb-4 text-sm leading-relaxed">"Better than ChatGPT for assignments because it formats everything for you. No copy-pasting needed."</p>
                     <div class="flex items-center gap-3 mt-4">
                         <div class="w-8 h-8 rounded-full bg-fandango/20 flex items-center justify-center text-xs font-bold text-fandango">MT</div>
                         <p class="font-bold text-sm text-white">Mike T.</p>
                     </div>
                 </div>
-                <div class="glass-panel p-6 rounded-xl relative">
+                <div class="glass-panel p-6 rounded-xl relative reveal-on-scroll" style="transition-delay: 200ms;">
                     <i class="fa-solid fa-quote-left absolute top-4 right-4 text-white/5 text-4xl"></i>
-                    <div class="flex text-yellow-400 mb-3 text-sm"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i></div>
+                    <div class="flex text-yellow-400 mb-3 text-sm" aria-label="4.5 stars">
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
+                    </div>
                     <p class="text-gray-300 italic mb-4 text-sm leading-relaxed">"The dark mode UI is beautiful. Love using this tool for quick research summaries."</p>
                     <div class="flex items-center gap-3 mt-4">
                         <div class="w-8 h-8 rounded-full bg-grape/20 flex items-center justify-center text-xs font-bold text-grape">AP</div>
@@ -243,17 +319,16 @@
     </section>
 
     <!-- TEAM SECTION -->
-    <section id="team" class="py-16 md:py-24 relative overflow-hidden reveal-on-scroll">
+    <section id="team" class="py-16 md:py-24 relative overflow-hidden">
         <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-transparent via-indigo/10 to-transparent pointer-events-none"></div>
         <div class="container mx-auto px-4 max-w-6xl relative z-10">
-            <div class="text-center mb-16">
+            <div class="text-center mb-16 reveal-on-scroll">
                 <span class="text-violet font-bold tracking-widest uppercase text-xs">The Minds Behind</span>
                 <h2 class="text-3xl md:text-5xl font-bold mt-2">Our Team</h2>
             </div>
 
             <div class="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-                <!-- Member 1: Aryansh -->
-                <div class="glass-panel p-8 rounded-3xl flex flex-col md:flex-row items-center gap-6 group hover:-translate-y-2 transition-transform duration-300">
+                <div class="glass-panel p-8 rounded-3xl flex flex-col md:flex-row items-center gap-6 group hover:-translate-y-2 transition-transform duration-300 reveal-on-scroll">
                     <div class="w-24 h-24 rounded-full bg-gradient-to-br from-violet to-grape p-[2px]">
                         <div class="w-full h-full rounded-full bg-darker flex items-center justify-center overflow-hidden">
                             <i class="fa-solid fa-user-astronaut text-4xl text-gray-400"></i>
@@ -263,14 +338,13 @@
                         <h3 class="text-2xl font-bold text-white mb-1">Aryansh Rai</h3>
                         <p class="text-violet font-medium mb-3">Founder & Creator</p>
                         <p class="text-gray-400 text-sm mb-4">Visionary developer behind FoilAI and Dfamo.</p>
-                        <a href="https://aryansh.site" target="_blank" class="inline-flex items-center gap-2 text-sm font-bold text-white bg-white/10 hover:bg-white/20 px-4 py-2 rounded-lg transition-colors" aria-label="Visit Aryansh Rai's Website">
+                        <a href="https://aryansh.site" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 text-sm font-bold text-white bg-white/10 hover:bg-white/20 px-4 py-2 rounded-lg transition-colors" aria-label="Visit Aryansh Rai's Website">
                             Visit Website <i class="fa-solid fa-arrow-right -rotate-45 group-hover:rotate-0 transition-transform"></i>
                         </a>
                     </div>
                 </div>
 
-                <!-- Member 2: AKM -->
-                <div class="glass-panel p-8 rounded-3xl flex flex-col md:flex-row items-center gap-6 group hover:-translate-y-2 transition-transform duration-300">
+                <div class="glass-panel p-8 rounded-3xl flex flex-col md:flex-row items-center gap-6 group hover:-translate-y-2 transition-transform duration-300 reveal-on-scroll" style="transition-delay: 150ms;">
                     <div class="w-24 h-24 rounded-full bg-gradient-to-br from-fandango to-indigo p-[2px]">
                         <div class="w-full h-full rounded-full bg-darker flex items-center justify-center overflow-hidden">
                             <i class="fa-solid fa-code text-4xl text-gray-400"></i>
@@ -280,7 +354,7 @@
                         <h3 class="text-2xl font-bold text-white mb-1">AKM</h3>
                         <p class="text-fandango font-medium mb-3">Lead Developer</p>
                         <p class="text-gray-400 text-sm mb-4">Expert in backend systems and AI integration.</p>
-                        <a href="https://inakm.github.io" target="_blank" class="inline-flex items-center gap-2 text-sm font-bold text-white bg-white/10 hover:bg-white/20 px-4 py-2 rounded-lg transition-colors" aria-label="Visit AKM's Website">
+                        <a href="https://inakm.github.io" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 text-sm font-bold text-white bg-white/10 hover:bg-white/20 px-4 py-2 rounded-lg transition-colors" aria-label="Visit AKM's Website">
                             Visit Website <i class="fa-solid fa-arrow-right -rotate-45 group-hover:rotate-0 transition-transform"></i>
                         </a>
                     </div>
@@ -299,55 +373,47 @@
             <p class="text-gray-300 mb-8 leading-relaxed">
                 Dfamo is free to use and maintained by students. If this tool helped you with your assignments, consider buying us a coffee to keep the servers running!
             </p>
-            <a href="https://buymeacoffee.com/aryanshrai" target="_blank" class="inline-block px-8 py-4 bg-[#FFDD00] text-black font-black rounded-xl hover:scale-105 transition-transform shadow-[0_0_20px_rgba(255,221,0,0.4)]" aria-label="Buy Me a Coffee">
+            <a href="https://buymeacoffee.com/aryanshrai" target="_blank" rel="noopener noreferrer" class="inline-block px-8 py-4 bg-[#FFDD00] text-black font-black rounded-xl hover:scale-105 transition-transform shadow-[0_0_20px_rgba(255,221,0,0.4)] focus:ring-4 focus:ring-yellow-400/50" aria-label="Buy Me a Coffee">
                 <i class="fa-solid fa-heart mr-2 text-red-600"></i> Buy Me a Coffee
             </a>
         </div>
     </section>
 
     <!-- FAQ Section -->
-    <section id="faq" class="py-16 reveal-on-scroll">
+    <section id="faq" class="py-16">
         <div class="container mx-auto px-4 max-w-3xl">
-            <h2 class="text-3xl font-bold mb-8 text-center">Frequently Asked <span class="text-violet">Questions</span></h2>
-            <div class="space-y-4">
+            <h2 class="text-3xl font-bold mb-8 text-center reveal-on-scroll">Frequently Asked <span class="text-violet">Questions</span></h2>
+            <div class="space-y-4 reveal-on-scroll">
                 <details class="group bg-glass-panel rounded-xl p-4 cursor-pointer border border-white/10 transition-colors hover:border-violet/30">
-                    <summary class="font-bold list-none flex justify-between items-center text-lg">
+                    <summary class="font-bold list-none flex justify-between items-center text-lg focus:text-violet">
                         Is Dfamo really free?
-                        <span class="transition group-open:rotate-180"><i class="fa-solid fa-chevron-down text-sm"></i></span>
+                        <span class="transition-transform group-open:rotate-180"><i class="fa-solid fa-chevron-down text-sm"></i></span>
                     </summary>
                     <p class="text-gray-400 mt-4 text-sm leading-relaxed border-t border-white/5 pt-4">Yes! Dfamo is currently free to use for all students during our Alpha phase. We believe education should be accessible.</p>
                 </details>
                 
                 <details class="group bg-glass-panel rounded-xl p-4 cursor-pointer border border-white/10 transition-colors hover:border-violet/30">
-                    <summary class="font-bold list-none flex justify-between items-center text-lg">
+                    <summary class="font-bold list-none flex justify-between items-center text-lg focus:text-violet">
                         Do you store my essays?
-                        <span class="transition group-open:rotate-180"><i class="fa-solid fa-chevron-down text-sm"></i></span>
+                        <span class="transition-transform group-open:rotate-180"><i class="fa-solid fa-chevron-down text-sm"></i></span>
                     </summary>
                     <p class="text-gray-400 mt-4 text-sm leading-relaxed border-t border-white/5 pt-4">No. We value privacy. We do not store your prompts or generated essays. Everything happens in your browser session.</p>
                 </details>
 
                 <details class="group bg-glass-panel rounded-xl p-4 cursor-pointer border border-white/10 transition-colors hover:border-violet/30">
-                    <summary class="font-bold list-none flex justify-between items-center text-lg">
+                    <summary class="font-bold list-none flex justify-between items-center text-lg focus:text-violet">
                         Is the content plagiarism-free?
-                        <span class="transition group-open:rotate-180"><i class="fa-solid fa-chevron-down text-sm"></i></span>
+                        <span class="transition-transform group-open:rotate-180"><i class="fa-solid fa-chevron-down text-sm"></i></span>
                     </summary>
                     <p class="text-gray-400 mt-4 text-sm leading-relaxed border-t border-white/5 pt-4">Dfamo generates unique content based on your prompt using AI. However, we always recommend checking the output with a plagiarism checker and adding your own citations.</p>
                 </details>
 
                 <details class="group bg-glass-panel rounded-xl p-4 cursor-pointer border border-white/10 transition-colors hover:border-violet/30">
-                    <summary class="font-bold list-none flex justify-between items-center text-lg">
+                    <summary class="font-bold list-none flex justify-between items-center text-lg focus:text-violet">
                         Does it work on mobile?
-                        <span class="transition group-open:rotate-180"><i class="fa-solid fa-chevron-down text-sm"></i></span>
+                        <span class="transition-transform group-open:rotate-180"><i class="fa-solid fa-chevron-down text-sm"></i></span>
                     </summary>
                     <p class="text-gray-400 mt-4 text-sm leading-relaxed border-t border-white/5 pt-4">Absolutely. Dfamo is fully responsive and optimized for smartphones and tablets.</p>
-                </details>
-
-                 <details class="group bg-glass-panel rounded-xl p-4 cursor-pointer border border-white/10 transition-colors hover:border-violet/30">
-                    <summary class="font-bold list-none flex justify-between items-center text-lg">
-                        What languages are supported?
-                        <span class="transition group-open:rotate-180"><i class="fa-solid fa-chevron-down text-sm"></i></span>
-                    </summary>
-                    <p class="text-gray-400 mt-4 text-sm leading-relaxed border-t border-white/5 pt-4">Currently, we support English (US/UK), Spanish, and French. Select your preferred language in the input settings.</p>
                 </details>
             </div>
         </div>
@@ -358,48 +424,40 @@
         <div class="container mx-auto px-4 max-w-6xl text-center">
             <h2 class="text-2xl font-bold mb-10">More from VroAI Labs</h2>
             <div class="flex flex-wrap justify-center gap-4">
-                <a href="https://gpt.vroai.in/" target="_blank" class="px-6 py-3 rounded-xl bg-darker border border-white/10 hover:border-violet transition-colors flex items-center gap-2"><i class="fa-solid fa-robot"></i> VroGPT</a>
-                <a href="https://foilai.in/" target="_blank" class="px-6 py-3 rounded-xl bg-darker border border-white/10 hover:border-fandango transition-colors flex items-center gap-2"><i class="fa-solid fa-brain"></i> FoilAI</a>
-                <a href="https://links.vroai.in" target="_blank" class="px-6 py-3 rounded-xl bg-darker border border-white/10 hover:border-white transition-colors flex items-center gap-2"><i class="fa-solid fa-link"></i> All Links</a>
+                <a href="https://gpt.vroai.in/" target="_blank" rel="noopener noreferrer" class="px-6 py-3 rounded-xl bg-darker border border-white/10 hover:border-violet transition-colors flex items-center gap-2 hover:scale-105 transform duration-200"><i class="fa-solid fa-robot"></i> VroGPT</a>
+                <a href="https://foilai.in/" target="_blank" rel="noopener noreferrer" class="px-6 py-3 rounded-xl bg-darker border border-white/10 hover:border-fandango transition-colors flex items-center gap-2 hover:scale-105 transform duration-200"><i class="fa-solid fa-brain"></i> FoilAI</a>
+                <a href="https://links.vroai.in" target="_blank" rel="noopener noreferrer" class="px-6 py-3 rounded-xl bg-darker border border-white/10 hover:border-white transition-colors flex items-center gap-2 hover:scale-105 transform duration-200"><i class="fa-solid fa-link"></i> All Links</a>
             </div>
         </div>
     </section>
 
-    <!-- Ad Space 3 (Bottom) -->
-    <div class="container mx-auto max-w-5xl my-6 px-4">
-        <div class="w-full h-24 bg-black/20 border border-dashed border-white/10 rounded-lg flex flex-col items-center justify-center text-gray-500 text-xs">
-            <span class="mb-1 font-bold">ADVERTISEMENT</span>
-            <span>Place your banner here</span>
-        </div>
-    </div>
-
     <!-- Footer -->
-    <footer class="bg-darker border-t border-white/10 pt-16 pb-8">
+    <footer class="bg-darker border-t border-white/10 pt-16 pb-8 text-sm">
         <div class="container mx-auto px-4 max-w-7xl">
-            <div class="grid md:grid-cols-4 gap-8 mb-12">
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 mb-12">
                 <!-- Col 1 -->
-                <div class="col-span-1 md:col-span-2">
+                <div class="col-span-1 sm:col-span-2">
                     <h2 class="text-2xl font-black bg-clip-text text-transparent bg-gradient-to-r from-violet to-grape mb-4">Dfamo</h2>
                     <p class="text-gray-400 text-sm max-w-sm mb-6 leading-relaxed">Transforming education with scalable AI solutions. Built for students, by students. Powered by the FoilAI Engine.</p>
-                    <p class="text-xs text-gray-500">Made with ❤️ by VroAI Labs - <a href="http://vroai.in" class="hover:text-violet underline">http://vroai.in</a></p>
+                    <p class="text-xs text-gray-500">Made with ❤️ by <a href="http://vroai.in" target="_blank" rel="noopener noreferrer" class="font-bold text-violet hover:text-white hover:underline transition-colors">VroAI Labs</a></p>
                 </div>
                 <!-- Col 2 -->
                 <div>
-                    <h4 class="font-bold mb-4 text-white">Quick Links</h4>
-                    <ul class="space-y-2 text-sm text-gray-400">
-                        <li><a href="#" class="hover:text-violet transition-colors">Home</a></li>
-                        <li><a href="#tool-section" class="hover:text-violet transition-colors">Tool</a></li>
-                        <li><a href="#reviews" class="hover:text-violet transition-colors">Reviews</a></li>
-                        <li><a href="mailto:contact@dfamo.co.uk" class="hover:text-violet transition-colors">Report Bug</a></li>
+                    <h4 class="font-bold mb-4 text-white text-base">Quick Links</h4>
+                    <ul class="space-y-3 text-gray-400">
+                        <li><a href="#" class="hover:text-violet transition-colors block">Home</a></li>
+                        <li><a href="#tool-section" class="hover:text-violet transition-colors block">Tool</a></li>
+                        <li><a href="#reviews" class="hover:text-violet transition-colors block">Reviews</a></li>
+                        <li><a href="mailto:contact@dfamo.co.uk" class="hover:text-violet transition-colors block">Report Bug</a></li>
                     </ul>
                 </div>
                 <!-- Col 3 -->
                 <div>
-                    <h4 class="font-bold mb-4 text-white">Legal & Contact</h4>
-                    <ul class="space-y-2 text-sm text-gray-400">
-                        <li><a href="#" class="hover:text-violet transition-colors">Privacy Policy</a></li>
-                        <li><a href="#" class="hover:text-violet transition-colors">Terms of Service</a></li>
-                        <li><a href="mailto:contact@dfamo.co.uk" class="hover:text-violet transition-colors">contact@dfamo.co.uk</a></li>
+                    <h4 class="font-bold mb-4 text-white text-base">Legal & Contact</h4>
+                    <ul class="space-y-3 text-gray-400">
+                        <li><a href="#" class="hover:text-violet transition-colors block">Privacy Policy</a></li>
+                        <li><a href="#" class="hover:text-violet transition-colors block">Terms of Service</a></li>
+                        <li><a href="mailto:contact@dfamo.co.uk" class="hover:text-violet transition-colors block">contact@dfamo.co.uk</a></li>
                     </ul>
                 </div>
             </div>
@@ -407,20 +465,78 @@
             <div class="border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
                 <p class="text-xs text-gray-600">&copy; 2025 Dfamo AI. All rights reserved.</p>
                 <div class="flex gap-6 text-xl">
-                    <a href="#" class="text-gray-600 hover:text-violet transition-colors" aria-label="Twitter"><i class="fa-brands fa-twitter"></i></a>
-                    <a href="#" class="text-gray-600 hover:text-violet transition-colors" aria-label="GitHub"><i class="fa-brands fa-github"></i></a>
-                    <a href="#" class="text-gray-600 hover:text-violet transition-colors" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#" class="text-gray-600 hover:text-violet transition-colors p-2" aria-label="Twitter"><i class="fa-brands fa-twitter"></i></a>
+                    <a href="#" class="text-gray-600 hover:text-violet transition-colors p-2" aria-label="GitHub"><i class="fa-brands fa-github"></i></a>
+                    <a href="#" class="text-gray-600 hover:text-violet transition-colors p-2" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
                 </div>
             </div>
         </div>
     </footer>
 
     <!-- Back to Top Button -->
-    <button id="backToTop" class="fixed bottom-6 right-6 bg-violet text-darkPurple w-12 h-12 rounded-full shadow-lg items-center justify-center hidden hover:bg-white hover:scale-110 transition-all z-40" aria-label="Back to Top">
+    <button id="backToTop" class="fixed bottom-6 right-6 bg-violet text-darkPurple w-12 h-12 rounded-full shadow-lg items-center justify-center hidden hover:bg-white hover:scale-110 transition-all z-40 focus:outline-none focus:ring-4 focus:ring-violet/50" aria-label="Back to Top">
         <i class="fa-solid fa-arrow-up font-bold"></i>
     </button>
 
+    <!-- Guide Modal -->
+    <div id="guide-modal" class="fixed inset-0 z-[100] modal-overlay hidden flex items-center justify-center p-4">
+        <div class="glass-panel p-6 md:p-8 rounded-2xl max-w-lg w-full relative transform scale-95 opacity-0 transition-all duration-300">
+            <button onclick="toggleGuide()" class="absolute top-4 right-4 text-gray-400 hover:text-white p-2" aria-label="Close Guide">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+            <h3 class="text-2xl font-bold mb-4 text-violet">How to use Dfamo</h3>
+            <div class="space-y-4 text-gray-300 text-sm">
+                <div class="flex gap-3">
+                    <span class="w-6 h-6 rounded-full bg-violet/20 flex items-center justify-center text-violet font-bold flex-shrink-0">1</span>
+                    <p>Select your preferred <strong>Tone</strong> (e.g., Academic) and <strong>Language</strong>.</p>
+                </div>
+                <div class="flex gap-3">
+                    <span class="w-6 h-6 rounded-full bg-violet/20 flex items-center justify-center text-violet font-bold flex-shrink-0">2</span>
+                    <p>Enter your topic or prompt in the text box. Be specific for better results.</p>
+                </div>
+                <div class="flex gap-3">
+                    <span class="w-6 h-6 rounded-full bg-violet/20 flex items-center justify-center text-violet font-bold flex-shrink-0">3</span>
+                    <p>Click <strong>Generate</strong> or press <kbd class="bg-white/10 px-1 rounded">Ctrl</kbd> + <kbd class="bg-white/10 px-1 rounded">Enter</kbd>.</p>
+                </div>
+                <div class="flex gap-3">
+                    <span class="w-6 h-6 rounded-full bg-violet/20 flex items-center justify-center text-violet font-bold flex-shrink-0">4</span>
+                    <p>Edit if needed, then <strong>Download as PDF</strong> or Copy.</p>
+                </div>
+            </div>
+            <button onclick="toggleGuide()" class="w-full mt-6 py-3 bg-violet hover:bg-fandango text-white font-bold rounded-xl transition-colors">Got it!</button>
+        </div>
+    </div>
+
+    <!-- Shortcuts Modal -->
+    <div id="shortcuts-modal" class="fixed inset-0 z-[100] modal-overlay hidden flex items-center justify-center p-4">
+        <div class="glass-panel p-6 md:p-8 rounded-2xl max-w-md w-full relative transform scale-95 opacity-0 transition-all duration-300">
+            <button onclick="toggleShortcuts()" class="absolute top-4 right-4 text-gray-400 hover:text-white p-2" aria-label="Close Shortcuts">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+            <h3 class="text-2xl font-bold mb-6 text-white"><i class="fa-regular fa-keyboard mr-2"></i> Shortcuts</h3>
+            <div class="space-y-3">
+                <div class="flex justify-between items-center p-3 bg-white/5 rounded-lg">
+                    <span class="text-gray-300">Generate</span>
+                    <div class="flex gap-1 text-xs font-bold font-mono"><span class="bg-white/10 px-2 py-1 rounded">Ctrl</span> + <span class="bg-white/10 px-2 py-1 rounded">Enter</span></div>
+                </div>
+                <div class="flex justify-between items-center p-3 bg-white/5 rounded-lg">
+                    <span class="text-gray-300">Clear Input</span>
+                    <div class="flex gap-1 text-xs font-bold font-mono"><span class="bg-white/10 px-2 py-1 rounded">Alt</span> + <span class="bg-white/10 px-2 py-1 rounded">C</span></div>
+                </div>
+                <div class="flex justify-between items-center p-3 bg-white/5 rounded-lg">
+                    <span class="text-gray-300">Download PDF</span>
+                    <div class="flex gap-1 text-xs font-bold font-mono"><span class="bg-white/10 px-2 py-1 rounded">Alt</span> + <span class="bg-white/10 px-2 py-1 rounded">D</span></div>
+                </div>
+                <div class="flex justify-between items-center p-3 bg-white/5 rounded-lg">
+                    <span class="text-gray-300">Close Modals</span>
+                    <div class="flex gap-1 text-xs font-bold font-mono"><span class="bg-white/10 px-2 py-1 rounded">Esc</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
+        // --- 1. CORE LOGIC (AI & PDF) ---
         const RULES = `You are DfamoAI — a professional academic writing assistant.
 
 When the user provides a topic:
@@ -438,19 +554,17 @@ When the user provides a topic:
         async function generateAssignment(prompt, tone, lang) {
             try {
                 const finalString = `${RULES}\n\nTone: ${tone}\nLanguage: ${lang}\nUser Request: ${prompt}`;
+                // Using Pollinations AI text endpoint (Free)
                 const url = "https://text.pollinations.ai/" + encodeURIComponent(finalString);
                 
                 const response = await fetch(url);
                 let text = await response.text();
 
                 if (text.startsWith("<")) {
-                    text = text.replace(/<[^>]*>/g, "");
+                    text = text.replace(/<[^>]*>/g, ""); // Basic HTML strip if error page returns
                 }
 
-                // ULTRA AGGRESSIVE CLEANUP
                 text = text.split('\n').map(line => {
-                    line = line.replace(/^[^a-zA-Z0-9#\-*\s]+/, '');
-                    line = line.replace(/[^\x20-\x7E]/g, '');
                     return line.trim();
                 }).filter(line => line.length > 0).join('\n');
 
@@ -493,9 +607,7 @@ When the user provides a topic:
             }
 
             if (inList) html += "</ul>";
-
             html += `<div style="margin-top: 2rem; padding-top: 1rem; border-top: 1px solid rgba(234, 122, 244, 0.3);"><p style="text-align: center; font-size: 0.875rem; color: #ea7af4; font-style: italic;">Generated by <strong>DfamoAI</strong></p></div>`;
-
             return html;
         }
 
@@ -527,118 +639,74 @@ When the user provides a topic:
 
             for (let i = 0; i < lines.length; i++) {
                 let line = lines[i].trim();
+                line = line.replace(/[^\x20-\x7E\u00A0-\u00FF]/g, ''); 
                 
-                line = line.replace(/^[^a-zA-Z0-9#\-*\s]+/, '');
-                line = line.replace(/[^\x20-\x7E]/g, '');
-                
-                if (!line) {
-                    y += 5;
-                    continue;
-                }
+                if (!line) { y += 5; continue; }
 
                 if (y > pageHeight - 30) {
                     doc.addPage();
                     y = 20;
                 }
 
-                // Title
                 if (line.startsWith('# ')) {
                     const title = line.slice(2);
                     doc.setFont('helvetica', 'bold');
                     doc.setFontSize(22);
                     doc.setTextColor(98, 0, 179);
-                    
-                    doc.text('*', margin, y);
-                    const titleLines = doc.splitTextToSize(title, maxWidth - 10);
-                    doc.text(titleLines, margin + 8, y);
-                    y += titleLines.length * 12;
-                    
+                    doc.text(title, margin, y);
+                    y += 12;
                     doc.setDrawColor(234, 122, 244);
-                    doc.setLineWidth(1);
                     doc.line(margin, y, pageWidth - margin, y);
                     y += 10;
-                }
-                // Section
-                else if (line.startsWith('## ')) {
+                } else if (line.startsWith('## ')) {
                     const section = line.slice(3);
-                    
-                    let symbol = '>';
-                    if (section.toLowerCase().includes('introduction')) symbol = '>';
-                    else if (section.toLowerCase().includes('conclusion')) symbol = 'v';
-                    else if (section.toLowerCase().includes('reference')) symbol = '*';
-                    else if (section.toLowerCase().includes('main')) symbol = 'o';
-                    
                     doc.setFont('helvetica', 'bold');
                     doc.setFontSize(16);
                     doc.setTextColor(180, 62, 143);
-                    
-                    doc.text(symbol, margin, y);
-                    const sectionLines = doc.splitTextToSize(section, maxWidth - 8);
-                    doc.text(sectionLines, margin + 6, y);
-                    y += sectionLines.length * 10;
-                }
-                // Subsection
-                else if (line.startsWith('### ')) {
-                    const subsection = line.slice(4);
+                    doc.text(section, margin, y);
+                    y += 10;
+                } else if (line.startsWith('### ')) {
+                    const sub = line.slice(4);
                     doc.setFont('helvetica', 'bold');
                     doc.setFontSize(13);
                     doc.setTextColor(59, 0, 134);
-                    
-                    doc.text('>', margin, y);
-                    const subsectionLines = doc.splitTextToSize(subsection, maxWidth - 6);
-                    doc.text(subsectionLines, margin + 5, y);
-                    y += subsectionLines.length * 8;
-                }
-                // List
-                else if (line.startsWith('- ') || line.startsWith('* ')) {
-                    let item = line.slice(2);
-                    item = item.replace(/\*\*/g, '').replace(/\*/g, '');
-                    
-                    doc.setFont('helvetica', 'bold');
+                    doc.text(sub, margin, y);
+                    y += 8;
+                } else if (line.startsWith('- ') || line.startsWith('* ')) {
+                    let item = line.slice(2).replace(/\*\*/g, '');
+                    doc.setFont('helvetica', 'normal');
                     doc.setFontSize(11);
                     doc.setTextColor(60, 60, 60);
-                    
-                    const itemLines = doc.splitTextToSize(`• ${item}`, maxWidth - 5);
+                    const itemLines = doc.splitTextToSize(`• ${item}`, maxWidth);
                     doc.text(itemLines, margin + 5, y);
                     y += itemLines.length * 6;
-                }
-                // Horizontal rule
-                else if (line.startsWith('---')) {
-                    doc.setDrawColor(234, 122, 244);
-                    doc.setLineWidth(0.5);
+                } else if (line.startsWith('---')) {
                     doc.line(margin, y, pageWidth - margin, y);
                     y += 8;
-                }
-                // Paragraph
-                else {
-                    let cleanLine = line.replace(/\*\*/g, '').replace(/\*/g, '');
-                    
-                    doc.setFont('helvetica', 'bold');
+                } else {
+                    let clean = line.replace(/\*\*/g, '');
+                    doc.setFont('helvetica', 'normal');
                     doc.setFontSize(11);
                     doc.setTextColor(40, 40, 40);
-                    
-                    const paraLines = doc.splitTextToSize(cleanLine, maxWidth);
+                    const paraLines = doc.splitTextToSize(clean, maxWidth);
                     doc.text(paraLines, margin, y);
-                    y += paraLines.length * 6 + 3;
+                    y += paraLines.length * 6 + 2;
                 }
             }
-
-            // Footer
+            
+            // Footer Paging
             const pageCount = doc.internal.getNumberOfPages();
             for (let i = 1; i <= pageCount; i++) {
                 doc.setPage(i);
                 doc.setFontSize(9);
                 doc.setTextColor(150, 150, 150);
-                doc.setFont('helvetica', 'normal');
                 doc.text(`Page ${i} of ${pageCount}`, pageWidth / 2, pageHeight - 10, { align: 'center' });
-                doc.setDrawColor(234, 122, 244);
-                doc.setLineWidth(0.5);
-                doc.line(margin, pageHeight - 15, pageWidth - margin, pageHeight - 15);
             }
 
             doc.save(`Dfamo_Document_${Date.now()}.pdf`);
         }
 
+        // --- 2. DOM ELEMENTS & LISTENERS ---
         const form = document.getElementById('assignment-form');
         const promptInput = document.getElementById('prompt');
         const toneSelect = document.getElementById('tone-select');
@@ -655,44 +723,72 @@ When the user provides a topic:
         const copyBtn = document.getElementById('copy-btn');
         const errorContainer = document.getElementById('error-container');
         const errorMessage = document.getElementById('error-message');
+        const backToTopBtn = document.getElementById('backToTop');
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
 
+        // --- 3. UI UTILITIES ---
+
+        // Character Count
         promptInput.addEventListener('input', () => {
-            charCount.textContent = `${promptInput.value.length} chars`;
+            requestAnimationFrame(() => {
+                charCount.textContent = `${promptInput.value.length} chars`;
+            });
+        });
+
+        // Sample Prompts Logic
+        document.querySelectorAll('.sample-prompt').forEach(btn => {
+            btn.addEventListener('click', () => {
+                promptInput.value = btn.getAttribute('data-prompt');
+                charCount.textContent = `${promptInput.value.length} chars`;
+                promptInput.focus();
+            });
         });
 
         function showError(msg) {
             errorMessage.textContent = msg;
             errorContainer.classList.remove('hidden');
-            setTimeout(() => errorContainer.classList.add('hidden'), 5000);
+            errorContainer.classList.add('flex');
+            setTimeout(() => {
+                errorContainer.classList.add('hidden');
+                errorContainer.classList.remove('flex');
+            }, 5000);
         }
 
         function setLoading(isLoading) {
             if (isLoading) {
                 generateBtn.disabled = true;
+                generateBtn.classList.add('opacity-75', 'cursor-not-allowed');
                 btnText.textContent = "Generating...";
                 btnLoader.classList.remove('hidden');
             } else {
                 generateBtn.disabled = false;
+                generateBtn.classList.remove('opacity-75', 'cursor-not-allowed');
                 btnText.textContent = "Generate Document";
                 btnLoader.classList.add('hidden');
             }
         }
 
+        // --- 4. FORM HANDLING ---
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             const prompt = promptInput.value.trim();
-            const tone = toneSelect.value;
-            const lang = langSelect.value;
-
+            
             if (!prompt) {
-                showError("Please enter a topic");
+                showError("Please enter a topic first.");
+                promptInput.focus();
                 return;
             }
 
             setLoading(true);
+            
+            // Mobile: Scroll to preview start
+            if(window.innerWidth < 768) {
+                document.getElementById('tool-section').scrollIntoView({ behavior: 'smooth' });
+            }
 
             try {
-                const result = await generateAssignment(prompt, tone, lang);
+                const result = await generateAssignment(prompt, toneSelect.value, langSelect.value);
                 generatedContent = result;
 
                 const html = renderContent(result);
@@ -701,36 +797,32 @@ When the user provides a topic:
                 previewEmpty.classList.add('hidden');
                 previewContent.classList.remove('hidden');
                 actionButtons.classList.remove('hidden');
+                actionButtons.classList.add('flex');
 
             } catch (err) {
-                showError("Failed to generate. Please try again.");
+                showError("Failed to generate content. Please try again.");
                 console.error(err);
             } finally {
                 setLoading(false);
             }
         });
 
+        // --- 5. ACTION BUTTONS ---
         downloadBtn.addEventListener('click', () => {
-            if (!generatedContent) {
-                showError("No content to download");
-                return;
-            }
-            
+            if (!generatedContent) return showError("No content to download");
             try {
-                const tone = toneSelect.value;
-                const lang = langSelect.value;
-                generatePDF(generatedContent, tone, lang);
+                generatePDF(generatedContent, toneSelect.value, langSelect.value);
             } catch (err) {
-                showError("Failed to generate PDF");
+                showError("Error creating PDF");
                 console.error(err);
             }
         });
 
         copyBtn.addEventListener('click', () => {
-            const text = previewContent.innerText;
-            navigator.clipboard.writeText(text).then(() => {
+            if (!previewContent.innerText) return;
+            navigator.clipboard.writeText(previewContent.innerText).then(() => {
                 const orig = copyBtn.innerHTML;
-                copyBtn.innerHTML = '<i class="fa-solid fa-check text-green-400"></i>';
+                copyBtn.innerHTML = '<i class="fa-solid fa-check text-green-400"></i> <span class="hidden sm:inline">Copied</span>';
                 setTimeout(() => { copyBtn.innerHTML = orig; }, 2000);
             });
         });
@@ -743,8 +835,112 @@ When the user provides a topic:
             previewContent.classList.add('hidden');
             previewEmpty.classList.remove('hidden');
             actionButtons.classList.add('hidden');
+            actionButtons.classList.remove('flex');
+            promptInput.focus();
         });
+
+        // --- 6. NAVIGATION & SCROLL LOGIC ---
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+            mobileMenu.classList.toggle('flex');
+            const icon = mobileMenuBtn.querySelector('i');
+            if (mobileMenu.classList.contains('flex')) {
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-xmark');
+            } else {
+                icon.classList.add('fa-bars');
+                icon.classList.remove('fa-xmark');
+            }
+        });
+
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 300) {
+                backToTopBtn.classList.remove('hidden');
+                backToTopBtn.classList.add('flex');
+            } else {
+                backToTopBtn.classList.add('hidden');
+                backToTopBtn.classList.remove('flex');
+            }
+        }, { passive: true });
+
+        backToTopBtn.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        const observerOptions = { threshold: 0.1, rootMargin: "0px 0px -50px 0px" };
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.reveal-on-scroll').forEach(el => observer.observe(el));
+
+        // --- 7. KEYBOARD SHORTCUTS & MODALS ---
+        function toggleGuide() {
+            const modal = document.getElementById('guide-modal');
+            const content = modal.querySelector('div');
+            
+            if (modal.classList.contains('hidden')) {
+                modal.classList.remove('hidden');
+                setTimeout(() => {
+                    content.classList.remove('scale-95', 'opacity-0');
+                    content.classList.add('scale-100', 'opacity-100');
+                }, 10);
+            } else {
+                content.classList.remove('scale-100', 'opacity-100');
+                content.classList.add('scale-95', 'opacity-0');
+                setTimeout(() => modal.classList.add('hidden'), 300);
+            }
+        }
+
+        function toggleShortcuts() {
+            const modal = document.getElementById('shortcuts-modal');
+            const content = modal.querySelector('div');
+            if (!mobileMenu.classList.contains('hidden')) {
+                mobileMenu.classList.add('hidden');
+                mobileMenu.classList.remove('flex');
+                mobileMenuBtn.querySelector('i').classList.add('fa-bars');
+                mobileMenuBtn.querySelector('i').classList.remove('fa-xmark');
+            }
+
+            if (modal.classList.contains('hidden')) {
+                modal.classList.remove('hidden');
+                setTimeout(() => {
+                    content.classList.remove('scale-95', 'opacity-0');
+                    content.classList.add('scale-100', 'opacity-100');
+                }, 10);
+            } else {
+                content.classList.remove('scale-100', 'opacity-100');
+                content.classList.add('scale-95', 'opacity-0');
+                setTimeout(() => modal.classList.add('hidden'), 300);
+            }
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                e.preventDefault();
+                document.getElementById('generate-btn').click();
+            }
+            if (e.altKey && e.code === 'KeyC') {
+                e.preventDefault();
+                clearBtn.click();
+            }
+            if (e.altKey && e.code === 'KeyD') {
+                e.preventDefault();
+                downloadBtn.click();
+            }
+            if (e.key === 'Escape') {
+                const guide = document.getElementById('guide-modal');
+                const shortcuts = document.getElementById('shortcuts-modal');
+                if (!guide.classList.contains('hidden')) toggleGuide();
+                if (!shortcuts.classList.contains('hidden')) toggleShortcuts();
+            }
+        });
+
     </script>
 </body>
 </html>
-    
