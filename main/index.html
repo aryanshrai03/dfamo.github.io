@@ -3,64 +3,68 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#290628">
     
-    <!-- ✅ SEO & META TAGS -->
-    <title>DfamoAI — Enterprise Grade AI Homework Solutions ⚡</title>
-    <meta name="description" content="DfamoAI is the advanced AI-powered tool for students to complete homework, assignments, and projects in seconds. Powered by FoilAI & VroAI Labs.">
-    <meta name="keywords" content="Dfamo, AI homework, homework help, AI website, free AI, study AI, no login AI, VroAI Labs, FoilAI, Aryansh Rai">
+    <!-- SEO & Meta Tags -->
+    <title>Dfamo — Homework Done in Seconds ⚡ | Free AI Tool by Aryansh Rai</title>
+    <meta name="description" content="Dfamo is a free AI-powered website that helps you complete your homework, assignments, and projects in seconds. No login required. Powered by FoilAI.">
+    <meta name="keywords" content="Dfamo, Aryansh Rai, FoilAI, AI homework, homework help, AI website, free AI, study AI, no login AI">
     <meta name="author" content="Aryansh Rai, FoilAI">
     
-    <!-- Open Graph -->
-    <meta property="og:title" content="DfamoAI — Smart Scalable Digital Solutions">
-    <meta property="og:description" content="Complete your homework in seconds with Enterprise AI. No login required.">
-    <meta property="og:url" content="https://dfamo.co.uk/">
+    <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
+    <meta property="og:url" content="https://dfamo.co.uk/">
+    <meta property="og:title" content="Dfamo — AI Homework Helper">
+    <meta property="og:description" content="Generate assignments and PDFs instantly. Free & No Login.">
     <meta property="og:image" content="https://dfamo.co.uk/logo.png">
 
-    <!-- ✅ FAVICON -->
+    <!-- Favicon -->
     <link rel="icon" type="image/png" href="https://dfamo.co.uk/logo.png">
 
-    <!-- ✅ FONTS (Optimized with display=swap) -->
+    <!-- Fonts (Optimized) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <!-- ✅ LIBRARIES -->
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+    
+    <!-- PDF Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
-    <!-- ✅ CONFIGURATION (TAILWIND) -->
+    <!-- Tailwind Config -->
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        'brand-violet': '#ea7af4',
-                        'brand-fandango': '#b43e8f',
-                        'brand-grape': '#6200b3',
-                        'brand-indigo': '#3b0086',
-                        'brand-dark': '#290628',
+                        violet: '#ea7af4',
+                        fandango: '#b43e8f',
+                        grape: '#6200b3',
+                        indigo: '#3b0086',
+                        darkPurple: '#290628',
+                        darker: '#0a0a0f',
                     },
                     fontFamily: {
                         sans: ['Montserrat', 'sans-serif'],
                     },
+                    backgroundImage: {
+                        'brand-gradient': 'linear-gradient(135deg, #ea7af4 0%, #b43e8f 50%, #6200b3 100%)',
+                    },
                     animation: {
-                        'gradient-xy': 'gradient-xy 15s ease infinite',
-                        'float': 'float 6s ease-in-out infinite',
-                        'fade-up': 'fadeUp 0.8s ease-out forwards',
+                        'blob': 'blob 10s infinite',
+                        'fade-in-up': 'fadeInUp 0.6s ease-out forwards',
                     },
                     keyframes: {
-                        'gradient-xy': {
-                            '0%, 100%': { 'background-size': '400% 400%', 'background-position': 'left center' },
-                            '50%': { 'background-size': '200% 200%', 'background-position': 'right center' }
+                        blob: {
+                            '0%': { transform: 'translate(0px, 0px) scale(1)' },
+                            '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
+                            '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+                            '100%': { transform: 'translate(0px, 0px) scale(1)' },
                         },
-                        float: {
-                            '0%, 100%': { transform: 'translateY(0)' },
-                            '50%': { transform: 'translateY(-10px)' },
-                        },
-                        fadeUp: {
+                        fadeInUp: {
                             '0%': { opacity: '0', transform: 'translateY(20px)' },
                             '100%': { opacity: '1', transform: 'translateY(0)' },
                         }
@@ -71,799 +75,715 @@
     </script>
 
     <style>
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #290628; }
-        ::-webkit-scrollbar-thumb { background: #b43e8f; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #ea7af4; }
+        :root {
+            --violet: #ea7af4;
+            --dark-purple: #290628;
+        }
 
+        body {
+            background-color: var(--dark-purple);
+            color: #ffffff;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+        
+        /* Prevent header overlap on jump */
         html { scroll-padding-top: 100px; }
+
+        /* Animated Grid */
+        .grid-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            background-image: linear-gradient(rgba(234, 122, 244, 0.03) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(234, 122, 244, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            animation: gridMove 60s linear infinite;
+            pointer-events: none;
+            will-change: transform;
+        }
+
+        @keyframes gridMove {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(40px, 40px); }
+        }
 
         /* Glassmorphism */
         .glass-panel {
-            background: rgba(41, 6, 40, 0.6);
+            background: rgba(41, 6, 40, 0.65);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(234, 122, 244, 0.1);
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
         }
         
-        .glass-header {
-            background: rgba(41, 6, 40, 0.9);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        .glass-pill {
+            background: rgba(59, 0, 134, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
         }
 
-        /* Animated Background */
-        body {
-            background: linear-gradient(-45deg, #290628, #3b0086, #6200b3, #290628);
-            background-size: 400% 400%;
-            animation: gradient-xy 15s ease infinite;
-        }
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #1a0419; }
+        ::-webkit-scrollbar-thumb { background: #6200b3; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #ea7af4; }
 
-        /* Pencil Animation */
-        .pencil-emoji {
-            position: absolute;
-            top: -60px;
-            right: 20px;
-            font-size: 3rem;
-            transform: rotate(90deg);
-            opacity: 0;
-            z-index: 50;
-            pointer-events: none;
-        }
+        /* Mobile Menu Animation */
+        .hidden-mobile-menu { display: none; }
+        .show-mobile-menu { display: flex; animation: slideDown 0.3s ease-out forwards; }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
 
-        .pencil-emoji.animating {
-            animation: pencilWrite 4s ease-in-out forwards;
-            opacity: 1;
-        }
-
-        @keyframes pencilWrite {
-            0% { transform: translate(0, 0) rotate(90deg); opacity: 1; }
-            20% { transform: translate(-40px, 100px) rotate(45deg); }
-            40% { transform: translate(40px, 200px) rotate(60deg); }
-            60% { transform: translate(-30px, 300px) rotate(30deg); }
-            80% { transform: translate(20px, 150px) rotate(50deg); }
-            100% { transform: translate(0, 0) rotate(90deg); opacity: 0; }
-        }
+        /* Utilities */
+        .reveal-on-scroll { opacity: 0; }
+        .hidden { display: none !important; }
         
-        /* Performance Optimized FAQ Accordion (No JS Geometry Reflow) */
-        .faq-wrapper {
-            display: grid;
-            grid-template-rows: 0fr;
-            transition: grid-template-rows 0.3s ease-out;
+        /* Loader */
+        .loader {
+            width: 18px; height: 18px;
+            border: 2px solid #FFF;
+            border-bottom-color: transparent;
+            border-radius: 50%;
+            display: inline-block;
+            box-sizing: border-box;
+            animation: rotation 1s linear infinite;
         }
-        .faq-wrapper.open {
-            grid-template-rows: 1fr;
-        }
-        .faq-inner {
-            overflow: hidden;
-        }
-
-        /* Animation On Scroll Utility */
-        .reveal {
-            opacity: 0;
-            transform: translateY(30px);
-            transition: all 0.8s ease-out;
-        }
-        .reveal.active {
-            opacity: 1;
-            transform: translateY(0);
-        }
+        @keyframes rotation { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
+<body class="antialiased relative selection:bg-violet selection:text-darkPurple">
 
-<body class="text-white min-h-screen flex flex-col overflow-x-hidden selection:bg-brand-violet selection:text-brand-dark font-sans">
+    <!-- Background Elements -->
+    <div class="grid-overlay"></div>
+    <div class="fixed top-0 left-0 w-full h-full pointer-events-none z-[-2] overflow-hidden">
+        <div class="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-grape rounded-full mix-blend-screen filter blur-[100px] opacity-20 animate-blob"></div>
+        <div class="absolute bottom-[-10%] left-[-10%] w-[500px] h-[500px] bg-fandango rounded-full mix-blend-screen filter blur-[100px] opacity-20 animate-blob animation-delay-2000"></div>
+    </div>
 
-    <!-- ✅ FLOATING PILL HEADER -->
-    <header class="fixed top-4 sm:top-6 left-0 right-0 z-50 flex justify-center px-4">
-        <div class="glass-header rounded-full px-5 py-3 flex items-center justify-between w-full max-w-5xl transition-all duration-300 hover:scale-[1.005]">
+    <!-- Navigation -->
+    <nav class="fixed top-4 md:top-6 left-0 right-0 z-50 flex justify-center px-4">
+        <div class="glass-pill rounded-full px-4 md:px-6 py-3 flex items-center justify-between gap-4 shadow-2xl shadow-indigo/40 w-full max-w-[95%] md:max-w-max transition-all duration-300">
             
-            <!-- Logo Area -->
-            <div class="flex items-center gap-3">
-                <a href="/" aria-label="Dfamo Homepage" class="flex items-center gap-2 group">
-                    <img src="https://dfamo.co.uk/logo.png" onerror="this.src='https://via.placeholder.com/40'" class="w-8 h-8 rounded-lg shadow-lg group-hover:rotate-12 transition-transform" alt="Dfamo Logo">
-                    <span class="font-bold text-lg sm:text-xl tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-brand-violet to-brand-fandango">DfamoAI</span>
-                </a>
-                <span class="hidden md:inline-block text-[10px] px-2 py-0.5 rounded-full bg-brand-indigo/50 text-brand-violet border border-brand-violet/30 font-mono">
-                   v0.0.9 Alpha
-                </span>
+            <!-- Logo -->
+            <a href="#" class="flex items-center gap-2 group min-w-max" aria-label="Dfamo Home">
+                <img src="https://dfamo.co.uk/logo.png" alt="Dfamo Logo" class="w-8 h-8 rounded-full border border-violet group-hover:rotate-12 transition-transform">
+                <span class="font-bold text-lg bg-clip-text text-transparent bg-gradient-to-r from-violet to-fandango">Dfamo</span>
+            </a>
+
+            <!-- Desktop Links -->
+            <div class="hidden md:flex items-center gap-6 text-xs font-bold uppercase tracking-wide text-gray-300">
+                <a href="#tool-section" class="hover:text-violet transition-colors">Tool</a>
+                <a href="#features" class="hover:text-violet transition-colors">Features</a>
+                <a href="#reviews" class="hover:text-violet transition-colors">Reviews</a>
+                <a href="#faq" class="hover:text-violet transition-colors">FAQ</a>
+                <a href="#team" class="hover:text-violet transition-colors">Team</a>
             </div>
 
-            <!-- Desktop Navigation -->
-            <nav class="hidden md:flex items-center gap-6 text-sm font-medium">
-                <a href="#guide" class="text-gray-300 hover:text-white hover:underline decoration-brand-violet underline-offset-4 transition-all">How it Works</a>
-                <a href="#ecosystem" class="text-gray-300 hover:text-white hover:underline decoration-brand-violet underline-offset-4 transition-all">Ecosystem</a>
-                <a href="/pdf/" class="text-brand-violet hover:text-white transition-colors"><i class="fas fa-file-pdf mr-1"></i>AI PDF</a>
-            </nav>
-
-            <!-- Nav Actions -->
+            <!-- Actions -->
             <div class="flex items-center gap-3">
-                <a href="https://buymeacoffee.com/aryanshrai" target="_blank" aria-label="Support Us" class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-yellow-400/10 border border-yellow-400/50 text-yellow-400 text-xs font-bold hover:bg-yellow-400 hover:text-black transition-all">
-                    <i class="fas fa-coffee"></i> Support
+                <a href="#donate" class="hidden md:flex items-center gap-1 text-xs font-bold text-pink-400 hover:text-pink-300 transition-colors mr-2">
+                    <i class="fa-solid fa-heart"></i> Donate
                 </a>
-                
-                <a href="https://foilai.in" target="_blank" aria-label="Visit FoilAI" class="hidden lg:flex items-center gap-2 text-sm font-medium text-gray-300 hover:text-white transition-colors">
-                    FoilAI <i class="fas fa-external-link-alt text-xs"></i>
+                <a href="https://dfamo.co.uk/" class="bg-violet hover:bg-white hover:text-grape text-darkPurple font-bold px-4 py-1.5 rounded-full text-xs transition-all shadow-[0_0_10px_rgba(234,122,244,0.4)] whitespace-nowrap">
+                    Try Beta
                 </a>
-
-                <button id="menuBtn" aria-label="Open Menu" class="md:hidden text-white focus:outline-none p-2 rounded-lg hover:bg-white/10">
-                    <i class="fas fa-bars text-xl"></i>
+                <button id="mobile-menu-btn" class="md:hidden text-gray-200 hover:text-violet focus:outline-none p-1" aria-label="Toggle Menu">
+                    <i class="fa-solid fa-bars text-xl"></i>
                 </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu Dropdown -->
+        <div id="mobile-menu" class="absolute top-20 left-4 right-4 glass-panel rounded-2xl p-4 hidden-mobile-menu flex-col gap-4 text-center md:hidden shadow-2xl z-50">
+            <a href="#tool-section" class="py-2 hover:text-violet border-b border-white/5" onclick="toggleMobileMenu()">Tool</a>
+            <a href="#features" class="py-2 hover:text-violet border-b border-white/5" onclick="toggleMobileMenu()">Features</a>
+            <a href="#reviews" class="py-2 hover:text-violet border-b border-white/5" onclick="toggleMobileMenu()">Feedbacks</a>
+            <a href="#team" class="py-2 hover:text-violet border-b border-white/5" onclick="toggleMobileMenu()">Our Team</a>
+            <a href="#donate" class="py-2 hover:text-pink-400 font-bold" onclick="toggleMobileMenu()"><i class="fa-solid fa-heart"></i> Donate</a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="relative pt-32 md:pt-44 pb-12 px-4 text-center overflow-hidden">
+        <div class="max-w-4xl mx-auto relative z-10 reveal-on-scroll">
+            <div class="inline-block mb-6 px-3 py-1 rounded-full border border-violet/30 bg-violet/10 text-violet text-[10px] md:text-xs font-semibold tracking-wider uppercase animate-pulse">
+                AI Version: 2
+            </div>
+            <h1 class="text-4xl md:text-7xl font-black mb-6 leading-tight tracking-tight">
+                Homework Done in <br>
+                <span class="bg-clip-text text-transparent bg-gradient-to-r from-violet via-fandango to-grape drop-shadow-[0_0_15px_rgba(234,122,244,0.3)]">Seconds ⚡</span>
+            </h1>
+            <p class="text-base md:text-xl text-gray-300 max-w-2xl mx-auto mb-10 leading-relaxed px-2">
+                Smart Scalable Digital Solutions for students. Create essays, assignments, and study notes instantly. No login required. Powered by <span class="text-violet font-bold">FoilAI</span>.
+            </p>
+            
+            <div class="flex flex-col sm:flex-row gap-4 justify-center items-center px-4 w-full sm:w-auto">
+                <a href="#tool-section" class="w-full sm:w-auto px-8 py-4 bg-brand-gradient rounded-xl font-bold text-white shadow-lg shadow-indigo/40 hover:scale-105 transition-transform flex items-center justify-center gap-2 group">
+                    Start Generating <i class="fa-solid fa-wand-magic-sparkles group-hover:rotate-12 transition-transform"></i>
+                </a>
+                <a href="#guide" class="w-full sm:w-auto px-8 py-4 rounded-xl border border-white/10 hover:bg-white/5 font-semibold transition-all">
+                    How it Works
+                </a>
             </div>
         </div>
     </header>
 
-    <!-- Mobile Menu Overlay -->
-    <div id="mobileMenu" class="fixed inset-0 bg-brand-dark/98 z-[60] hidden flex-col items-center justify-center space-y-8 backdrop-blur-xl transition-all">
-        <button id="closeMenu" aria-label="Close Menu" class="absolute top-6 right-6 p-2 text-2xl text-gray-400 hover:text-brand-violet"><i class="fas fa-times"></i></button>
-        
-        <a href="#" class="text-2xl font-bold hover:text-brand-violet transition-colors" onclick="toggleMenu()">Home</a>
-        <a href="#guide" class="text-xl font-medium hover:text-brand-violet transition-colors" onclick="toggleMenu()">How It Works</a>
-        <a href="/pdf/" class="text-xl font-medium text-brand-violet hover:text-white transition-colors">AI PDF Tools</a>
-        <a href="#ecosystem" class="text-xl font-medium hover:text-brand-violet transition-colors" onclick="toggleMenu()">Projects</a>
-        
-        <a href="https://buymeacoffee.com/aryanshrai" target="_blank" class="flex items-center gap-2 px-6 py-3 rounded-full bg-yellow-400 text-black font-bold hover:scale-105 transition-transform">
-            <i class="fas fa-coffee"></i> Buy us a Coffee
-        </a>
+    <!-- Ad Space 1 (Top) -->
+    <div class="container mx-auto max-w-5xl my-6 px-4">
+        <div class="w-full h-24 bg-black/20 border border-dashed border-white/10 rounded-lg flex flex-col items-center justify-center text-gray-500 text-xs">
+            <span class="mb-1 font-bold">ADVERTISEMENT</span>
+            <span>Support Dfamo by checking out our sponsors</span>
+        </div>
     </div>
 
-    <!-- ✅ MAIN HERO SECTION -->
-    <main class="flex-grow flex flex-col items-center pt-32 pb-12 px-4 md:px-6 relative z-10 w-full max-w-7xl mx-auto">
-        
-        <!-- Hero Text -->
-        <div class="text-center mb-10 relative w-full reveal active">
-            <div id="pencilEmoji" class="pencil-emoji">✏️</div>
+    <!-- MAIN TOOL SECTION -->
+    <main id="tool-section" class="container mx-auto max-w-7xl px-4 py-8 md:py-12 reveal-on-scroll">
+        <div class="flex flex-col lg:grid lg:grid-cols-[1fr_1.2fr] gap-6 md:gap-8">
             
-            <div class="inline-block mb-3 px-4 py-1 rounded-full bg-brand-indigo/30 border border-brand-violet/20 text-brand-violet text-xs font-semibold tracking-wider uppercase animate-float">
-                ✨ Powered by VroAI Labs
-            </div>
-            
-            <h1 class="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-black mb-4 tracking-tighter leading-tight">
-                <span class="bg-clip-text text-transparent bg-gradient-to-r from-white via-brand-violet to-brand-fandango">
-                    Smart Learning
-                </span>
-                <br>
-                <span class="text-white opacity-90">Simplified.</span>
-            </h1>
-            
-            <p class="text-gray-300 text-base md:text-xl max-w-2xl mx-auto font-light leading-relaxed px-4">
-                Enterprise-grade solutions for your academic challenges. 
-                Upload, speak, or type — get instant results in seconds.
-            </p>
-        </div>
-
-        <!-- ✅ TOOL INTERFACE -->
-        <div class="w-full max-w-3xl glass-panel rounded-3xl p-1 md:p-2 shadow-2xl reveal">
-            
-            <!-- Mode Switcher Tabs -->
-            <div class="flex flex-wrap p-2 gap-2 bg-black/20 rounded-2xl mb-4">
-                <button id="textModeBtn" aria-label="Text Mode" class="flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-sm font-bold transition-all duration-300 bg-gradient-to-r from-brand-indigo to-brand-fandango shadow-lg text-white">
-                    <i class="fas fa-keyboard"></i> <span class="hidden sm:inline">Text</span>
-                </button>
-                <button id="imageModeBtn" aria-label="Image Mode" class="flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-sm font-bold transition-all duration-300 hover:bg-white/5 text-gray-400 hover:text-white">
-                    <i class="fas fa-camera"></i> <span class="hidden sm:inline">Image</span>
-                </button>
-                <button id="audioModeBtn" aria-label="Audio Mode" class="flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-sm font-bold transition-all duration-300 hover:bg-white/5 text-gray-400 hover:text-white">
-                    <i class="fas fa-microphone"></i> <span class="hidden sm:inline">Audio</span>
-                </button>
-                <button id="aiPdfBtn" aria-label="PDF Tools" onclick="window.location.href='/pdf/'" class="flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-sm font-bold transition-all duration-300 hover:bg-white/5 text-gray-400 hover:text-white">
-                    <i class="fas fa-file-pdf"></i> <span class="hidden sm:inline">PDF</span>
-                </button>
-            </div>
-
-            <!-- Input Area Content -->
-            <div class="p-4 md:p-6 relative">
+            <!-- Left Panel: Input -->
+            <div class="glass-panel p-6 md:p-8 rounded-3xl relative overflow-hidden flex flex-col">
+                <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-violet to-grape"></div>
                 
-                <!-- Text Input -->
-                <div id="textInputContainer" class="w-full relative">
-                    <textarea 
-                        id="questionInput" 
-                        rows="4" 
-                        class="w-full bg-brand-dark/50 border border-brand-grape/50 rounded-2xl p-4 text-white placeholder-gray-500 focus:outline-none focus:border-brand-violet focus:ring-1 focus:ring-brand-violet transition-all resize-none text-base md:text-lg"
-                        placeholder="Type your question here... (e.g., 'Solve 2x + 5 = 15')"></textarea>
-                    
-                    <!-- Shortcuts Tooltip (Desktop) -->
-                    <div class="absolute bottom-4 right-4 text-xs text-gray-500 hidden md:block">
-                        <span class="bg-brand-dark/80 px-2 py-1 rounded border border-white/10">Ctrl</span> + <span class="bg-brand-dark/80 px-2 py-1 rounded border border-white/10">Enter</span> to Submit
-                    </div>
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-xl md:text-2xl font-bold flex items-center gap-3">
+                        <span class="w-8 h-8 rounded-lg bg-violet/20 flex items-center justify-center text-violet"><i class="fa-solid fa-pen-nib"></i></span>
+                        Input
+                    </h2>
+                    <span id="char-count" class="text-xs text-gray-500">0 chars</span>
                 </div>
-
-                <!-- Image Input -->
-                <div id="imageInputContainer" class="hidden">
-                    <label for="imageUpload" class="group relative flex flex-col items-center justify-center w-full h-48 border-2 border-dashed border-brand-grape rounded-2xl cursor-pointer hover:bg-brand-indigo/20 transition-all bg-brand-dark/30">
-                        <div class="flex flex-col items-center justify-center pt-5 pb-6 text-center px-4">
-                            <i class="fas fa-cloud-upload-alt text-4xl mb-3 text-brand-violet group-hover:scale-110 transition-transform"></i>
-                            <p id="uploadLabel" class="mb-2 text-sm text-gray-300"><span class="font-semibold text-brand-violet">Click to upload</span> or drag and drop</p>
-                            <p class="text-xs text-gray-500">SVG, PNG, JPG or GIF</p>
-                        </div>
-                        <input id="imageUpload" type="file" class="hidden" accept="image/*" />
-                    </label>
-                    <div id="extractedTextInfo" class="mt-3 p-3 bg-brand-indigo/30 rounded-xl text-xs text-brand-violet hidden font-mono border border-brand-indigo">
-                        <i class="fas fa-check-circle mr-1"></i> Text extracted successfully
-                    </div>
-                </div>
-
-                <!-- Audio Input -->
-                <div id="audioInputContainer" class="hidden text-center py-6">
-                    <button id="micButton" aria-label="Start Listening" class="relative group w-20 h-20 rounded-full bg-gradient-to-br from-brand-fandango to-brand-grape flex items-center justify-center mx-auto shadow-lg shadow-brand-violet/20 hover:scale-105 transition-all">
-                        <div class="absolute inset-0 bg-brand-violet rounded-full blur opacity-0 group-hover:opacity-40 transition-opacity"></div>
-                        <i id="micIcon" class="fas fa-microphone text-3xl text-white relative z-10"></i>
-                    </button>
-                    <p id="listeningStatus" class="mt-4 text-gray-300 font-medium">Tap microphone to speak</p>
-                    <div id="transcriptDisplay" class="hidden mt-4 p-4 bg-brand-dark/50 rounded-xl border border-white/10 text-left">
-                        <p class="text-xs text-brand-violet mb-1 uppercase tracking-wider">Transcript</p>
-                        <p id="transcriptText" class="text-sm text-gray-200 italic"></p>
-                    </div>
-                </div>
-
-                <!-- Action Buttons -->
-                <div class="flex gap-3 mt-6">
-                    <button id="submitBtn" aria-label="Submit Question" class="flex-1 bg-gradient-to-r from-brand-violet via-brand-fandango to-brand-grape text-white font-bold py-4 rounded-xl shadow-lg hover:shadow-brand-violet/40 hover:-translate-y-1 transition-all duration-300 flex items-center justify-center gap-2 group active:scale-95">
-                        <span>SOLVE NOW</span>
-                        <i class="fas fa-bolt group-hover:animate-pulse"></i>
-                    </button>
-                    <button id="refreshBtn" aria-label="Clear All" class="px-6 bg-white/10 border border-white/10 hover:bg-white/20 text-white rounded-xl transition-all flex items-center justify-center group active:scale-95" title="Clear All (Ctrl+K)">
-                        <i class="fas fa-redo-alt group-hover:rotate-180 transition-transform duration-500"></i>
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- ✅ AD PLACEMENT -->
-        <div class="w-full max-w-4xl mt-8 mb-4 reveal">
-            <div id="ad-container" class="w-full h-24 bg-black/20 rounded-xl border border-white/5 flex items-center justify-center overflow-hidden">
-                <span class="text-white/20 text-sm font-semibold tracking-widest uppercase">Sponsored Advertisement</span>
-            </div>
-        </div>
-
-        <!-- ✅ SOLUTION OUTPUT -->
-        <section class="w-full max-w-3xl mt-6 transition-all duration-500 reveal">
-            <div class="glass-panel rounded-3xl p-1 relative overflow-hidden">
-                <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-brand-violet via-brand-indigo to-brand-dark"></div>
                 
-                <div class="bg-black/40 rounded-2xl p-6 min-h-[100px]">
-                    <h3 class="text-brand-violet font-bold text-sm uppercase tracking-widest mb-4 flex items-center gap-2">
-                        <i class="fas fa-robot"></i> AI Analysis & Solution
-                    </h3>
-                    
-                    <div id="Solution" class="prose prose-invert max-w-none text-gray-200 leading-relaxed font-light">
-                        <div class="text-center text-gray-500 py-8">
-                            <i class="fas fa-sparkles text-2xl mb-2 opacity-50"></i>
-                            <p>Your detailed solution will appear here...</p>
-                        </div>
+                <form id="assignment-form" class="space-y-4 flex-grow flex flex-col">
+                    <!-- Advanced Controls -->
+                    <div class="grid grid-cols-2 gap-3 mb-2">
+                        <select id="tone-select" class="bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-gray-300 focus:border-violet outline-none cursor-pointer">
+                            <option value="Standard">Standard Tone</option>
+                            <option value="Academic">Academic / Formal</option>
+                            <option value="Creative">Creative / Story</option>
+                            <option value="Simple">Simple English</option>
+                        </select>
+                        <select id="lang-select" class="bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-gray-300 focus:border-violet outline-none cursor-pointer">
+                            <option value="English">English (US)</option>
+                            <option value="UK">English (UK)</option>
+                            <option value="Spanish">Spanish</option>
+                            <option value="French">French</option>
+                        </select>
                     </div>
-                </div>
-            </div>
-        </section>
 
-        <!-- ✅ USER GUIDE SECTION -->
-        <section id="guide" class="w-full max-w-5xl mt-24 mb-12">
-            <h2 class="text-3xl font-bold text-center mb-10 reveal"><span class="bg-clip-text text-transparent bg-gradient-to-r from-brand-violet to-brand-fandango">How It Works</span></h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div class="glass-panel p-6 rounded-2xl relative overflow-hidden group reveal" style="transition-delay: 100ms;">
-                    <div class="absolute -right-4 -top-4 w-24 h-24 bg-brand-violet/10 rounded-full group-hover:scale-150 transition-transform duration-500"></div>
-                    <div class="text-4xl text-brand-violet mb-4 font-bold opacity-30">01</div>
-                    <h4 class="font-bold text-xl mb-2">Select Mode</h4>
-                    <p class="text-sm text-gray-400">Choose Text to type manually, Image to scan homework, or Audio to speak your question.</p>
-                </div>
-                <div class="glass-panel p-6 rounded-2xl relative overflow-hidden group reveal" style="transition-delay: 200ms;">
-                     <div class="absolute -right-4 -top-4 w-24 h-24 bg-brand-fandango/10 rounded-full group-hover:scale-150 transition-transform duration-500"></div>
-                    <div class="text-4xl text-brand-fandango mb-4 font-bold opacity-30">02</div>
-                    <h4 class="font-bold text-xl mb-2">Input Query</h4>
-                    <p class="text-sm text-gray-400">Provide the problem clearly. Use <code class="bg-white/10 px-1 rounded text-xs">Ctrl+Enter</code> to submit quickly.</p>
-                </div>
-                <div class="glass-panel p-6 rounded-2xl relative overflow-hidden group reveal" style="transition-delay: 300ms;">
-                     <div class="absolute -right-4 -top-4 w-24 h-24 bg-brand-grape/10 rounded-full group-hover:scale-150 transition-transform duration-500"></div>
-                    <div class="text-4xl text-brand-grape mb-4 font-bold opacity-30">03</div>
-                    <h4 class="font-bold text-xl mb-2">Get Solution</h4>
-                    <p class="text-sm text-gray-400">Receive an instant, step-by-step breakdown. Copy the logic to understand!</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- ✅ VROAI ECOSYSTEM & TEAM -->
-        <section id="ecosystem" class="w-full max-w-6xl mt-12 mb-20 px-4 reveal">
-            <div class="bg-brand-dark/40 border border-brand-violet/10 rounded-3xl p-8 backdrop-blur-md">
-                <h2 class="text-3xl font-bold text-center mb-2">The <span class="text-brand-violet">VroAI</span> Ecosystem</h2>
-                <p class="text-center text-gray-400 mb-10">Advanced scalable solutions for the digital age.</p>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
-                    <a href="https://gpt.vroai.in/" target="_blank" aria-label="Open VroGPT" class="glass-panel p-4 rounded-xl hover:bg-brand-violet/10 transition flex items-center gap-3 group">
-                        <i class="fas fa-brain text-2xl text-brand-violet group-hover:scale-110 transition-transform"></i>
-                        <div>
-                            <div class="font-bold">VroGPT</div>
-                            <div class="text-xs text-gray-400">Advanced AI Chat</div>
-                        </div>
-                    </a>
-                    <a href="https://foilai.in/" target="_blank" aria-label="Open FoilAI" class="glass-panel p-4 rounded-xl hover:bg-brand-fandango/10 transition flex items-center gap-3 group">
-                        <i class="fas fa-project-diagram text-2xl text-brand-fandango group-hover:scale-110 transition-transform"></i>
-                        <div>
-                            <div class="font-bold">FoilAI</div>
-                            <div class="text-xs text-gray-400">Core AI Engine</div>
-                        </div>
-                    </a>
-                    <a href="https://links.vroai.in" target="_blank" aria-label="Open Links" class="glass-panel p-4 rounded-xl hover:bg-brand-grape/10 transition flex items-center gap-3 group">
-                        <i class="fas fa-link text-2xl text-brand-grape group-hover:scale-110 transition-transform"></i>
-                        <div>
-                            <div class="font-bold">More Links</div>
-                            <div class="text-xs text-gray-400">Project Directory</div>
-                        </div>
-                    </a>
-                     <a href="https://dfamo.co.uk/pdf" aria-label="Open PDF Tools" class="glass-panel p-4 rounded-xl hover:bg-brand-indigo/10 transition flex items-center gap-3 group">
-                        <i class="fas fa-file-pdf text-2xl text-white group-hover:scale-110 transition-transform"></i>
-                        <div>
-                            <div class="font-bold">Dfamo PDF</div>
-                            <div class="text-xs text-gray-400">Document Tools</div>
-                        </div>
-                    </a>
-                </div>
-
-                <div class="border-t border-white/5 pt-8">
-                    <h3 class="text-xl font-bold text-center mb-6">Meet the Team</h3>
-                    <div class="flex flex-col sm:flex-row justify-center gap-8">
-                        <!-- Aryansh -->
-                        <div class="flex items-center gap-4 bg-white/5 p-4 rounded-xl hover:bg-white/10 transition">
-                            <div class="w-12 h-12 rounded-full bg-gradient-to-tr from-brand-violet to-brand-indigo flex items-center justify-center font-bold text-xl">A</div>
-                            <div>
-                                <h4 class="font-bold">Aryansh Rai</h4>
-                                <p class="text-xs text-gray-400">Founder & Lead Dev</p>
-                                <a href="https://aryansh.site" target="_blank" aria-label="Aryansh Portfolio" class="text-xs text-brand-violet hover:underline mt-1 block">Visit Portfolio &rarr;</a>
-                            </div>
-                        </div>
-                        <!-- AKM -->
-                         <div class="flex items-center gap-4 bg-white/5 p-4 rounded-xl hover:bg-white/10 transition">
-                            <div class="w-12 h-12 rounded-full bg-gradient-to-tr from-blue-500 to-cyan-500 flex items-center justify-center font-bold text-xl">A</div>
-                            <div>
-                                <h4 class="font-bold">AKM</h4>
-                                <p class="text-xs text-gray-400">Core Team</p>
-                                <a href="https://inakm.github.io" target="_blank" aria-label="AKM Portfolio" class="text-xs text-blue-400 hover:underline mt-1 block">Visit Portfolio &rarr;</a>
-                            </div>
-                        </div>
+                    <div class="relative flex-grow">
+                        <textarea id="prompt" required placeholder="Describe your assignment here (e.g., 'Write a 1000-word essay on Climate Change')..." 
+                        class="w-full h-full min-h-[250px] bg-darker/50 border border-white/10 rounded-2xl p-4 text-white placeholder-gray-600 focus:outline-none focus:border-violet focus:ring-1 focus:ring-violet transition-all resize-none font-sans leading-relaxed text-base"></textarea>
                     </div>
-                </div>
-            </div>
-        </section>
 
-        <!-- ✅ STUDENT FEEDBACKS -->
-        <section class="w-full max-w-5xl mb-20">
-            <h2 class="text-2xl font-bold text-center mb-8 reveal">What Students Say</h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div class="glass-panel p-6 rounded-xl transform hover:-translate-y-1 transition duration-300 reveal">
-                    <div class="flex text-yellow-400 text-xs mb-3"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
-                    <p class="text-sm text-gray-300 italic mb-4">"Saved my calc assignment last night. The step-by-step logic is actually better than my professor's."</p>
-                    <p class="text-xs font-bold text-brand-violet">- Sarah J., Engineering Major</p>
-                </div>
-                <div class="glass-panel p-6 rounded-xl transform hover:-translate-y-1 transition duration-300 reveal" style="transition-delay: 100ms;">
-                    <div class="flex text-yellow-400 text-xs mb-3"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
-                    <p class="text-sm text-gray-300 italic mb-4">"The audio feature allows me to ask questions while I'm reading. Dfamo is insanely fast."</p>
-                    <p class="text-xs font-bold text-brand-violet">- Mike T., High School Student</p>
-                </div>
-                <div class="glass-panel p-6 rounded-xl transform hover:-translate-y-1 transition duration-300 reveal" style="transition-delay: 200ms;">
-                    <div class="flex text-yellow-400 text-xs mb-3"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
-                    <p class="text-sm text-gray-300 italic mb-4">"Finally a free tool that doesn't ask for a credit card. VroAI Labs is doing god's work."</p>
-                    <p class="text-xs font-bold text-brand-violet">- Priya K., Computer Science</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- ✅ FAQ SECTION (Optimized for Reflow) -->
-        <section id="faq" class="w-full max-w-3xl mb-24 reveal">
-            <h2 class="text-2xl font-bold text-center mb-8">Frequently Asked Questions</h2>
-            <div class="space-y-4">
-                <!-- Q1 -->
-                <div class="glass-panel rounded-xl">
-                    <button class="w-full text-left p-4 font-semibold flex justify-between items-center focus:outline-none hover:bg-white/5 transition" onclick="toggleFaq(this)" aria-expanded="false">
-                        <span>Is Dfamo really free?</span>
-                        <i class="fas fa-chevron-down transition-transform duration-300"></i>
+                    <button type="submit" id="generate-btn" class="w-full py-4 bg-gradient-to-r from-indigo to-grape hover:from-grape hover:to-fandango rounded-xl font-bold text-white shadow-lg shadow-indigo/30 transition-all active:scale-95 flex items-center justify-center gap-2 group">
+                        <span id="btn-text">Generate Document</span>
+                        <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                        <span id="btn-loader" class="hidden loader"></span>
                     </button>
-                    <div class="faq-wrapper">
-                        <div class="faq-inner">
-                            <p class="p-4 text-sm text-gray-400 border-t border-white/5">Yes! Dfamo is currently 100% free to use for students. We believe in accessible education powered by VroAI Labs.</p>
-                        </div>
+                    <p class="hidden md:block text-center text-xs text-gray-500">Shortcut: <kbd class="bg-white/10 px-1 rounded">Ctrl</kbd> + <kbd class="bg-white/10 px-1 rounded">Enter</kbd></p>
+                </form>
+
+                <!-- Error Display -->
+                <div id="error-container" class="hidden mt-4 p-4 bg-red-500/20 border border-red-500/50 rounded-xl text-red-200 text-sm">
+                    <div id="error-message"></div>
+                </div>
+            </div>
+
+            <!-- Right Panel: Preview -->
+            <div class="glass-panel p-6 md:p-8 rounded-3xl flex flex-col h-full min-h-[500px]">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+                    <h2 class="text-xl md:text-2xl font-bold flex items-center gap-3">
+                        <span class="w-8 h-8 rounded-lg bg-fandango/20 flex items-center justify-center text-fandango"><i class="fa-solid fa-eye"></i></span>
+                        Preview
+                    </h2>
+                    <div id="action-buttons" class="hidden flex gap-2 w-full sm:w-auto">
+                         <button id="copy-btn" class="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg text-sm font-bold transition-colors text-white" aria-label="Copy Text" title="Copy to Clipboard">
+                            <i class="fa-regular fa-copy"></i>
+                        </button>
+                        <button id="download-btn" class="flex-1 sm:flex-none px-4 py-2 bg-green-600 hover:bg-green-500 rounded-lg text-sm font-bold transition-colors flex items-center justify-center gap-2 text-white shadow-lg shadow-green-900/20" aria-label="Download PDF">
+                            <i class="fa-solid fa-download"></i> Download PDF
+                        </button>
+                        <button id="clear-btn" class="px-4 py-2 bg-red-500/20 hover:bg-red-500/40 text-red-200 rounded-lg text-sm transition-colors" aria-label="Clear Content" title="Clear All">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
                     </div>
                 </div>
-                <!-- Q2 -->
-                <div class="glass-panel rounded-xl">
-                    <button class="w-full text-left p-4 font-semibold flex justify-between items-center focus:outline-none hover:bg-white/5 transition" onclick="toggleFaq(this)" aria-expanded="false">
-                        <span>Do I need to create an account?</span>
-                        <i class="fas fa-chevron-down transition-transform duration-300"></i>
-                    </button>
-                    <div class="faq-wrapper">
-                        <div class="faq-inner">
-                            <p class="p-4 text-sm text-gray-400 border-t border-white/5">No login is required. You can start solving your homework immediately and anonymously.</p>
-                        </div>
+
+                <div class="preview-content flex-grow bg-darker/40 rounded-2xl p-4 md:p-8 border border-white/5 overflow-y-auto font-serif text-gray-300 leading-loose shadow-inner relative text-sm md:text-base">
+                    <div id="preview-empty" class="absolute inset-0 flex flex-col items-center justify-center text-gray-600 opacity-60 pointer-events-none">
+                        <i class="fa-regular fa-file-lines text-5xl md:text-6xl mb-4"></i>
+                        <p>Your content will appear here</p>
                     </div>
-                </div>
-                <!-- Q3 -->
-                <div class="glass-panel rounded-xl">
-                    <button class="w-full text-left p-4 font-semibold flex justify-between items-center focus:outline-none hover:bg-white/5 transition" onclick="toggleFaq(this)" aria-expanded="false">
-                        <span>How accurate is the AI?</span>
-                        <i class="fas fa-chevron-down transition-transform duration-300"></i>
-                    </button>
-                    <div class="faq-wrapper">
-                        <div class="faq-inner">
-                             <p class="p-4 text-sm text-gray-400 border-t border-white/5">Dfamo uses advanced LLMs via FoilAI. While highly accurate for STEM and Humanities, always verify important results as AI can occasionally hallucinate.</p>
-                        </div>
+                    <div id="preview-content" class="content hidden prose prose-invert max-w-none">
+                        <!-- Generated Content -->
                     </div>
                 </div>
             </div>
-        </section>
-
-        <!-- ✅ DONATE SECTION (NEW) -->
-        <section class="w-full max-w-lg mb-20 text-center reveal">
-            <div class="glass-panel p-8 rounded-3xl border border-yellow-400/30">
-                <i class="fas fa-coffee text-4xl text-yellow-400 mb-4"></i>
-                <h3 class="text-2xl font-bold mb-2">Fuel the Developers</h3>
-                <p class="text-gray-400 mb-6 text-sm">We keep Dfamo free for everyone. If this tool helped you, consider buying us a coffee!</p>
-                <a href="https://buymeacoffee.com/aryanshrai" target="_blank" aria-label="Donate" class="inline-flex items-center gap-3 px-8 py-3 rounded-full bg-gradient-to-r from-yellow-400 to-orange-500 text-black font-bold shadow-lg hover:shadow-orange-500/50 hover:-translate-y-1 transition-all">
-                    <span>Buy us a Coffee</span>
-                    <i class="fas fa-arrow-right"></i>
-                </a>
-            </div>
-        </section>
-
+        </div>
     </main>
 
-    <!-- ✅ BACK TO TOP BUTTON -->
-    <button id="backToTop" aria-label="Back to Top" class="fixed bottom-6 right-6 z-40 bg-gradient-to-r from-brand-violet to-brand-fandango text-white p-3 rounded-full shadow-lg shadow-brand-violet/30 hover:scale-110 transition-all opacity-0 pointer-events-none duration-300">
-        <i class="fas fa-arrow-up text-xl"></i>
-    </button>
+    <!-- Features Section -->
+    <section id="features" class="py-16 md:py-20 bg-black/20 reveal-on-scroll">
+        <div class="container mx-auto px-4 max-w-6xl">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">Why use <span class="text-violet">Dfamo?</span></h2>
+                <p class="text-gray-400">Advanced features tailored for academic success.</p>
+            </div>
 
-    <!-- ✅ FOOTER -->
-    <footer class="mt-auto border-t border-white/5 bg-black/60 backdrop-blur-xl pt-16 pb-8">
-        <div class="max-w-7xl mx-auto px-6">
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-12 mb-12 text-center sm:text-left">
-                <!-- Column 1: Brand -->
-                <div class="col-span-1">
-                    <div class="flex items-center justify-center sm:justify-start gap-2 mb-4">
-                        <img src="https://dfamo.co.uk/logo.png" onerror="this.src='https://via.placeholder.com/30'" class="h-8 rounded-md" alt="Logo">
-                        <span class="font-bold">DfamoAI</span>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="glass-panel p-6 rounded-2xl hover:border-violet/30 transition-colors group">
+                    <div class="w-12 h-12 bg-violet/20 rounded-full flex items-center justify-center text-violet mb-4 text-xl group-hover:scale-110 transition-transform"><i class="fa-solid fa-bolt"></i></div>
+                    <h3 class="text-xl font-bold mb-2">Instant Generation</h3>
+                    <p class="text-gray-400 text-sm">Process prompts faster than you can blink. Optimized for low-latency responses using FoilAI Engine.</p>
+                </div>
+                <div class="glass-panel p-6 rounded-2xl hover:border-fandango/30 transition-colors group">
+                    <div class="w-12 h-12 bg-fandango/20 rounded-full flex items-center justify-center text-fandango mb-4 text-xl group-hover:scale-110 transition-transform"><i class="fa-solid fa-file-pdf"></i></div>
+                    <h3 class="text-xl font-bold mb-2">Professional PDF</h3>
+                    <p class="text-gray-400 text-sm">Convert generated text directly into a formatted, professional PDF ready for submission.</p>
+                </div>
+                <div class="glass-panel p-6 rounded-2xl hover:border-grape/30 transition-colors group">
+                    <div class="w-12 h-12 bg-grape/20 rounded-full flex items-center justify-center text-grape mb-4 text-xl group-hover:scale-110 transition-transform"><i class="fa-solid fa-shield-halved"></i></div>
+                    <h3 class="text-xl font-bold mb-2">No Login Required</h3>
+                    <p class="text-gray-400 text-sm">Privacy first. Use the tool immediately without accounts, emails, or data tracking.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Ad Space 2 (Middle) -->
+    <div class="container mx-auto max-w-5xl my-8 px-4">
+        <div class="w-full h-24 bg-black/20 border border-dashed border-white/10 rounded-lg flex flex-col items-center justify-center text-gray-500 text-xs">
+            <span class="mb-1 font-bold">ADVERTISEMENT</span>
+            <span>Your Ad Here - Contact contact@dfamo.co.uk</span>
+        </div>
+    </div>
+
+    <!-- STUDENT FEEDBACK SECTION -->
+    <section id="reviews" class="py-16 bg-white/5 reveal-on-scroll">
+        <div class="container mx-auto px-4 max-w-6xl">
+            <h2 class="text-3xl font-bold mb-10 text-center">Student <span class="text-violet">Feedbacks</span></h2>
+            <div class="grid md:grid-cols-3 gap-6">
+                <div class="glass-panel p-6 rounded-xl relative">
+                    <i class="fa-solid fa-quote-left absolute top-4 right-4 text-white/5 text-4xl"></i>
+                    <div class="flex text-yellow-400 mb-3 text-sm"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                    <p class="text-gray-300 italic mb-4 text-sm leading-relaxed">"Saved my life during finals week. The PDF generation is super clean and the academic tone selector is a game changer."</p>
+                    <div class="flex items-center gap-3 mt-4">
+                        <div class="w-8 h-8 rounded-full bg-violet/20 flex items-center justify-center text-xs font-bold text-violet">SJ</div>
+                        <p class="font-bold text-sm text-white">Sarah J.</p>
                     </div>
-                    <p class="text-gray-400 text-sm leading-relaxed mb-4">
-                        Smart scalable digital solutions for students. Enterprise AI without limits.
-                    </p>
-                     <div class="flex gap-4 justify-center sm:justify-start">
-                        <a href="https://instagram.com/dfamoai" aria-label="Instagram" class="w-8 h-8 rounded bg-white/5 flex items-center justify-center text-gray-400 hover:text-brand-violet hover:bg-white/10 transition-colors"><i class="fab fa-instagram"></i></a>
-                        <a href="https://github.com/aryanshrai03/Dfamo" aria-label="GitHub" class="w-8 h-8 rounded bg-white/5 flex items-center justify-center text-gray-400 hover:text-brand-violet hover:bg-white/10 transition-colors"><i class="fab fa-github"></i></a>
+                </div>
+                <div class="glass-panel p-6 rounded-xl relative">
+                    <i class="fa-solid fa-quote-left absolute top-4 right-4 text-white/5 text-4xl"></i>
+                    <div class="flex text-yellow-400 mb-3 text-sm"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                    <p class="text-gray-300 italic mb-4 text-sm leading-relaxed">"Better than ChatGPT for assignments because it formats everything for you. No copy-pasting needed."</p>
+                    <div class="flex items-center gap-3 mt-4">
+                        <div class="w-8 h-8 rounded-full bg-fandango/20 flex items-center justify-center text-xs font-bold text-fandango">MT</div>
+                        <p class="font-bold text-sm text-white">Mike T.</p>
                     </div>
                 </div>
-
-                <!-- Column 2: Projects -->
-                <div>
-                    <h4 class="font-bold text-white mb-4">Projects</h4>
-                    <ul class="space-y-2 text-sm text-gray-400">
-                        <li><a href="https://gpt.vroai.in/" class="hover:text-brand-violet transition-colors">VroGPT</a></li>
-                        <li><a href="https://foilai.in/" class="hover:text-brand-violet transition-colors">FoilAI</a></li>
-                        <li><a href="https://links.vroai.in" class="hover:text-brand-violet transition-colors">All Links</a></li>
-                        <li><a href="/pdf/" class="hover:text-brand-violet transition-colors">Dfamo PDF</a></li>
-                    </ul>
-                </div>
-
-                <!-- Column 3: Team -->
-                <div>
-                    <h4 class="font-bold text-white mb-4">Developers</h4>
-                    <ul class="space-y-2 text-sm text-gray-400">
-                        <li><a href="https://aryansh.site" class="hover:text-brand-violet transition-colors">Aryansh Rai</a></li>
-                        <li><a href="https://inakm.github.io" class="hover:text-brand-violet transition-colors">AKM</a></li>
-                        <li><a href="http://vroai.in" class="hover:text-brand-violet transition-colors">VroAI Labs</a></li>
-                    </ul>
-                </div>
-
-                <!-- Column 4: Support -->
-                <div>
-                    <h4 class="font-bold text-white mb-4">Support</h4>
-                    <p class="text-sm text-gray-400 mb-2">Enquiries or Bugs?</p>
-                    <a href="mailto:contact@dfamo.co.uk" class="text-brand-violet font-medium hover:underline text-sm break-all">contact@dfamo.co.uk</a>
-                    <div class="mt-4">
-                        <a href="https://buymeacoffee.com/aryanshrai" class="text-xs text-yellow-400 hover:underline">Donate <i class="fas fa-heart"></i></a>
+                <div class="glass-panel p-6 rounded-xl relative">
+                    <i class="fa-solid fa-quote-left absolute top-4 right-4 text-white/5 text-4xl"></i>
+                    <div class="flex text-yellow-400 mb-3 text-sm"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i></div>
+                    <p class="text-gray-300 italic mb-4 text-sm leading-relaxed">"The dark mode UI is beautiful. Love using this tool for quick research summaries."</p>
+                    <div class="flex items-center gap-3 mt-4">
+                        <div class="w-8 h-8 rounded-full bg-grape/20 flex items-center justify-center text-xs font-bold text-grape">AP</div>
+                        <p class="font-bold text-sm text-white">Ananya P.</p>
                     </div>
                 </div>
             </div>
+        </div>
+    </section>
+
+    <!-- TEAM SECTION -->
+    <section id="team" class="py-16 md:py-24 relative overflow-hidden reveal-on-scroll">
+        <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-transparent via-indigo/10 to-transparent pointer-events-none"></div>
+        <div class="container mx-auto px-4 max-w-6xl relative z-10">
+            <div class="text-center mb-16">
+                <span class="text-violet font-bold tracking-widest uppercase text-xs">The Minds Behind</span>
+                <h2 class="text-3xl md:text-5xl font-bold mt-2">Our Team</h2>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                <!-- Member 1: Aryansh -->
+                <div class="glass-panel p-8 rounded-3xl flex flex-col md:flex-row items-center gap-6 group hover:-translate-y-2 transition-transform duration-300">
+                    <div class="w-24 h-24 rounded-full bg-gradient-to-br from-violet to-grape p-[2px]">
+                        <div class="w-full h-full rounded-full bg-darker flex items-center justify-center overflow-hidden">
+                            <i class="fa-solid fa-user-astronaut text-4xl text-gray-400"></i>
+                        </div>
+                    </div>
+                    <div class="text-center md:text-left flex-1">
+                        <h3 class="text-2xl font-bold text-white mb-1">Aryansh Rai</h3>
+                        <p class="text-violet font-medium mb-3">Founder & Creator</p>
+                        <p class="text-gray-400 text-sm mb-4">Visionary developer behind FoilAI and Dfamo.</p>
+                        <a href="https://aryansh.site" target="_blank" class="inline-flex items-center gap-2 text-sm font-bold text-white bg-white/10 hover:bg-white/20 px-4 py-2 rounded-lg transition-colors" aria-label="Visit Aryansh Rai's Website">
+                            Visit Website <i class="fa-solid fa-arrow-right -rotate-45 group-hover:rotate-0 transition-transform"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Member 2: AKM -->
+                <div class="glass-panel p-8 rounded-3xl flex flex-col md:flex-row items-center gap-6 group hover:-translate-y-2 transition-transform duration-300">
+                    <div class="w-24 h-24 rounded-full bg-gradient-to-br from-fandango to-indigo p-[2px]">
+                        <div class="w-full h-full rounded-full bg-darker flex items-center justify-center overflow-hidden">
+                            <i class="fa-solid fa-code text-4xl text-gray-400"></i>
+                        </div>
+                    </div>
+                    <div class="text-center md:text-left flex-1">
+                        <h3 class="text-2xl font-bold text-white mb-1">AKM</h3>
+                        <p class="text-fandango font-medium mb-3">Lead Developer</p>
+                        <p class="text-gray-400 text-sm mb-4">Expert in backend systems and AI integration.</p>
+                        <a href="https://inakm.github.io" target="_blank" class="inline-flex items-center gap-2 text-sm font-bold text-white bg-white/10 hover:bg-white/20 px-4 py-2 rounded-lg transition-colors" aria-label="Visit AKM's Website">
+                            Visit Website <i class="fa-solid fa-arrow-right -rotate-45 group-hover:rotate-0 transition-transform"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- DONATION SECTION -->
+    <section id="donate" class="py-16 bg-gradient-to-r from-darkPurple to-indigo/20 reveal-on-scroll">
+        <div class="container mx-auto px-4 max-w-3xl text-center">
+            <div class="inline-block p-4 rounded-full bg-white/5 mb-6 animate-bounce">
+                <i class="fa-solid fa-mug-hot text-4xl text-yellow-400"></i>
+            </div>
+            <h2 class="text-3xl font-bold mb-4">Enjoying Dfamo?</h2>
+            <p class="text-gray-300 mb-8 leading-relaxed">
+                Dfamo is free to use and maintained by students. If this tool helped you with your assignments, consider buying us a coffee to keep the servers running!
+            </p>
+            <a href="https://buymeacoffee.com/aryanshrai" target="_blank" class="inline-block px-8 py-4 bg-[#FFDD00] text-black font-black rounded-xl hover:scale-105 transition-transform shadow-[0_0_20px_rgba(255,221,0,0.4)]" aria-label="Buy Me a Coffee">
+                <i class="fa-solid fa-heart mr-2 text-red-600"></i> Buy Me a Coffee
+            </a>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section id="faq" class="py-16 reveal-on-scroll">
+        <div class="container mx-auto px-4 max-w-3xl">
+            <h2 class="text-3xl font-bold mb-8 text-center">Frequently Asked <span class="text-violet">Questions</span></h2>
+            <div class="space-y-4">
+                <details class="group bg-glass-panel rounded-xl p-4 cursor-pointer border border-white/10 transition-colors hover:border-violet/30">
+                    <summary class="font-bold list-none flex justify-between items-center text-lg">
+                        Is Dfamo really free?
+                        <span class="transition group-open:rotate-180"><i class="fa-solid fa-chevron-down text-sm"></i></span>
+                    </summary>
+                    <p class="text-gray-400 mt-4 text-sm leading-relaxed border-t border-white/5 pt-4">Yes! Dfamo is currently free to use for all students during our Alpha phase. We believe education should be accessible.</p>
+                </details>
+                
+                <details class="group bg-glass-panel rounded-xl p-4 cursor-pointer border border-white/10 transition-colors hover:border-violet/30">
+                    <summary class="font-bold list-none flex justify-between items-center text-lg">
+                        Do you store my essays?
+                        <span class="transition group-open:rotate-180"><i class="fa-solid fa-chevron-down text-sm"></i></span>
+                    </summary>
+                    <p class="text-gray-400 mt-4 text-sm leading-relaxed border-t border-white/5 pt-4">No. We value privacy. We do not store your prompts or generated essays. Everything happens in your browser session.</p>
+                </details>
+
+                <details class="group bg-glass-panel rounded-xl p-4 cursor-pointer border border-white/10 transition-colors hover:border-violet/30">
+                    <summary class="font-bold list-none flex justify-between items-center text-lg">
+                        Is the content plagiarism-free?
+                        <span class="transition group-open:rotate-180"><i class="fa-solid fa-chevron-down text-sm"></i></span>
+                    </summary>
+                    <p class="text-gray-400 mt-4 text-sm leading-relaxed border-t border-white/5 pt-4">Dfamo generates unique content based on your prompt using AI. However, we always recommend checking the output with a plagiarism checker and adding your own citations.</p>
+                </details>
+
+                <details class="group bg-glass-panel rounded-xl p-4 cursor-pointer border border-white/10 transition-colors hover:border-violet/30">
+                    <summary class="font-bold list-none flex justify-between items-center text-lg">
+                        Does it work on mobile?
+                        <span class="transition group-open:rotate-180"><i class="fa-solid fa-chevron-down text-sm"></i></span>
+                    </summary>
+                    <p class="text-gray-400 mt-4 text-sm leading-relaxed border-t border-white/5 pt-4">Absolutely. Dfamo is fully responsive and optimized for smartphones and tablets.</p>
+                </details>
+
+                 <details class="group bg-glass-panel rounded-xl p-4 cursor-pointer border border-white/10 transition-colors hover:border-violet/30">
+                    <summary class="font-bold list-none flex justify-between items-center text-lg">
+                        What languages are supported?
+                        <span class="transition group-open:rotate-180"><i class="fa-solid fa-chevron-down text-sm"></i></span>
+                    </summary>
+                    <p class="text-gray-400 mt-4 text-sm leading-relaxed border-t border-white/5 pt-4">Currently, we support English (US/UK), Spanish, and French. Select your preferred language in the input settings.</p>
+                </details>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Link Section -->
+    <section class="py-16 bg-white/5 reveal-on-scroll">
+        <div class="container mx-auto px-4 max-w-6xl text-center">
+            <h2 class="text-2xl font-bold mb-10">More from VroAI Labs</h2>
+            <div class="flex flex-wrap justify-center gap-4">
+                <a href="https://gpt.vroai.in/" target="_blank" class="px-6 py-3 rounded-xl bg-darker border border-white/10 hover:border-violet transition-colors flex items-center gap-2"><i class="fa-solid fa-robot"></i> VroGPT</a>
+                <a href="https://foilai.in/" target="_blank" class="px-6 py-3 rounded-xl bg-darker border border-white/10 hover:border-fandango transition-colors flex items-center gap-2"><i class="fa-solid fa-brain"></i> FoilAI</a>
+                <a href="https://links.vroai.in" target="_blank" class="px-6 py-3 rounded-xl bg-darker border border-white/10 hover:border-white transition-colors flex items-center gap-2"><i class="fa-solid fa-link"></i> All Links</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Ad Space 3 (Bottom) -->
+    <div class="container mx-auto max-w-5xl my-6 px-4">
+        <div class="w-full h-24 bg-black/20 border border-dashed border-white/10 rounded-lg flex flex-col items-center justify-center text-gray-500 text-xs">
+            <span class="mb-1 font-bold">ADVERTISEMENT</span>
+            <span>Place your banner here</span>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-darker border-t border-white/10 pt-16 pb-8">
+        <div class="container mx-auto px-4 max-w-7xl">
+            <div class="grid md:grid-cols-4 gap-8 mb-12">
+                <!-- Col 1 -->
+                <div class="col-span-1 md:col-span-2">
+                    <h2 class="text-2xl font-black bg-clip-text text-transparent bg-gradient-to-r from-violet to-grape mb-4">Dfamo</h2>
+                    <p class="text-gray-400 text-sm max-w-sm mb-6 leading-relaxed">Transforming education with scalable AI solutions. Built for students, by students. Powered by the FoilAI Engine.</p>
+                    <p class="text-xs text-gray-500">Made with ❤️ by VroAI Labs - <a href="http://vroai.in" class="hover:text-violet underline">http://vroai.in</a></p>
+                </div>
+                <!-- Col 2 -->
+                <div>
+                    <h4 class="font-bold mb-4 text-white">Quick Links</h4>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li><a href="#" class="hover:text-violet transition-colors">Home</a></li>
+                        <li><a href="#tool-section" class="hover:text-violet transition-colors">Tool</a></li>
+                        <li><a href="#reviews" class="hover:text-violet transition-colors">Reviews</a></li>
+                        <li><a href="mailto:contact@dfamo.co.uk" class="hover:text-violet transition-colors">Report Bug</a></li>
+                    </ul>
+                </div>
+                <!-- Col 3 -->
+                <div>
+                    <h4 class="font-bold mb-4 text-white">Legal & Contact</h4>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li><a href="#" class="hover:text-violet transition-colors">Privacy Policy</a></li>
+                        <li><a href="#" class="hover:text-violet transition-colors">Terms of Service</a></li>
+                        <li><a href="mailto:contact@dfamo.co.uk" class="hover:text-violet transition-colors">contact@dfamo.co.uk</a></li>
+                    </ul>
+                </div>
+            </div>
             
-            <div class="border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center text-xs text-gray-500 gap-4">
-                <p>&copy; 2024 DfamoAI (Alpha 0.0.9). All rights reserved.</p>
-                <div class="flex items-center gap-1">
-                    <span>Made with <i class="fas fa-heart text-brand-fandango animate-pulse"></i> by</span>
-                    <a href="http://vroai.in" class="text-brand-violet hover:text-white font-semibold transition-colors">VroAI Labs</a>
+            <div class="border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+                <p class="text-xs text-gray-600">&copy; 2025 Dfamo AI. All rights reserved.</p>
+                <div class="flex gap-6 text-xl">
+                    <a href="#" class="text-gray-600 hover:text-violet transition-colors" aria-label="Twitter"><i class="fa-brands fa-twitter"></i></a>
+                    <a href="#" class="text-gray-600 hover:text-violet transition-colors" aria-label="GitHub"><i class="fa-brands fa-github"></i></a>
+                    <a href="#" class="text-gray-600 hover:text-violet transition-colors" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
                 </div>
             </div>
         </div>
     </footer>
 
-    <!-- ✅ MAIN LOGIC SCRIPT -->
+    <!-- Back to Top Button -->
+    <button id="backToTop" class="fixed bottom-6 right-6 bg-violet text-darkPurple w-12 h-12 rounded-full shadow-lg items-center justify-center hidden hover:bg-white hover:scale-110 transition-all z-40" aria-label="Back to Top">
+        <i class="fa-solid fa-arrow-up font-bold"></i>
+    </button>
+
+    <!-- JS Logic -->
     <script>
-        // State
-        let mode = 'text';
-        let question = '';
-        let isListening = false;
-        let recognition = null;
-        let countdownInterval = null;
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // --- 1. Mobile Menu Logic ---
+            const menuBtn = document.getElementById('mobile-menu-btn');
+            const mobileMenu = document.getElementById('mobile-menu');
+            
+            window.toggleMobileMenu = () => {
+                const isHidden = mobileMenu.classList.contains('hidden-mobile-menu');
+                if (isHidden) {
+                    mobileMenu.classList.remove('hidden-mobile-menu');
+                    mobileMenu.classList.add('show-mobile-menu');
+                    menuBtn.innerHTML = '<i class="fa-solid fa-xmark text-xl"></i>';
+                } else {
+                    mobileMenu.classList.add('hidden-mobile-menu');
+                    mobileMenu.classList.remove('show-mobile-menu');
+                    menuBtn.innerHTML = '<i class="fa-solid fa-bars text-xl"></i>';
+                }
+            };
+            menuBtn.addEventListener('click', window.toggleMobileMenu);
 
-        // Elements
-        const els = {
-            textBtn: document.getElementById('textModeBtn'),
-            imgBtn: document.getElementById('imageModeBtn'),
-            audioBtn: document.getElementById('audioModeBtn'),
-            pdfBtn: document.getElementById('aiPdfBtn'),
-            
-            textCont: document.getElementById('textInputContainer'),
-            imgCont: document.getElementById('imageInputContainer'),
-            audioCont: document.getElementById('audioInputContainer'),
-            
-            input: document.getElementById('questionInput'),
-            fileInput: document.getElementById('imageUpload'),
-            uploadLabel: document.getElementById('uploadLabel'),
-            extractInfo: document.getElementById('extractedTextInfo'),
-            
-            submitBtn: document.getElementById('submitBtn'),
-            refreshBtn: document.getElementById('refreshBtn'),
-            solution: document.getElementById('Solution'),
-            
-            micBtn: document.getElementById('micButton'),
-            micStatus: document.getElementById('listeningStatus'),
-            transcript: document.getElementById('transcriptText'),
-            transcriptBox: document.getElementById('transcriptDisplay'),
-            
-            pencil: document.getElementById('pencilEmoji'),
-            
-            mobileMenu: document.getElementById('mobileMenu'),
-            menuBtn: document.getElementById('menuBtn'),
-            closeMenu: document.getElementById('closeMenu'),
-            
-            backToTop: document.getElementById('backToTop')
-        };
-
-        // Mobile Menu Logic
-        const toggleMenu = () => els.mobileMenu.classList.toggle('hidden');
-        els.menuBtn.addEventListener('click', () => els.mobileMenu.classList.remove('hidden', 'flex') || els.mobileMenu.classList.add('flex'));
-        els.closeMenu.addEventListener('click', () => els.mobileMenu.classList.add('hidden'));
-
-        // Scroll Animation & Back To Top (Throttled for Performance)
-        let isScrolling = false;
-        window.addEventListener('scroll', () => {
-            if (!isScrolling) {
-                window.requestAnimationFrame(() => {
-                    // Back to Top Visibility
-                    if (window.scrollY > 300) {
-                        els.backToTop.classList.remove('opacity-0', 'pointer-events-none');
-                    } else {
-                        els.backToTop.classList.add('opacity-0', 'pointer-events-none');
+            // --- 2. Scroll Animation ---
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('animate-fade-in-up');
+                        entry.target.style.opacity = '1';
+                        observer.unobserve(entry.target);
                     }
+                });
+            }, { threshold: 0.1 });
 
-                    // Simple Intersection Observer Logic for Fade-ups
-                    const reveals = document.querySelectorAll('.reveal');
-                    const windowHeight = window.innerHeight;
-                    const elementVisible = 150;
+            document.querySelectorAll('.reveal-on-scroll').forEach(el => observer.observe(el));
 
-                    reveals.forEach((reveal) => {
-                        const elementTop = reveal.getBoundingClientRect().top;
-                        if (elementTop < windowHeight - elementVisible) {
-                            reveal.classList.add('active');
+            // --- 3. Back to Top ---
+            const backToTopBtn = document.getElementById('backToTop');
+            window.addEventListener('scroll', () => {
+                window.requestAnimationFrame(() => {
+                    if (window.scrollY > 400) {
+                        backToTopBtn.classList.remove('hidden');
+                        backToTopBtn.classList.add('flex');
+                    } else {
+                        backToTopBtn.classList.add('hidden');
+                        backToTopBtn.classList.remove('flex');
+                    }
+                });
+            });
+            backToTopBtn.addEventListener('click', () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+
+            // --- 4. Tool Logic ---
+            const form = document.getElementById('assignment-form');
+            const promptInput = document.getElementById('prompt');
+            const toneSelect = document.getElementById('tone-select');
+            const langSelect = document.getElementById('lang-select');
+            const charCount = document.getElementById('char-count');
+            
+            const generateBtn = document.getElementById('generate-btn');
+            const btnText = document.getElementById('btn-text');
+            const btnLoader = document.getElementById('btn-loader');
+            
+            const previewContent = document.getElementById('preview-content');
+            const previewEmpty = document.getElementById('preview-empty');
+            const actionButtons = document.getElementById('action-buttons');
+            const downloadBtn = document.getElementById('download-btn');
+            const clearBtn = document.getElementById('clear-btn');
+            const copyBtn = document.getElementById('copy-btn');
+            const errorContainer = document.getElementById('error-container');
+
+            // Character Count
+            promptInput.addEventListener('input', () => {
+                charCount.textContent = `${promptInput.value.length} chars`;
+            });
+
+            // Generator Logic
+            const generateDocument = async (e) => {
+                e.preventDefault();
+                const topic = promptInput.value.trim();
+                const tone = toneSelect.value;
+                const lang = langSelect.value;
+
+                if (!topic) {
+                    showError("Please enter a topic.");
+                    return;
+                }
+
+                setLoading(true);
+                hideError();
+                
+                try {
+                    // Simulate API Delay
+                    await new Promise(resolve => setTimeout(resolve, 1800));
+
+                    // Dynamic HTML Generation based on Inputs
+                    const generatedHTML = `
+                        <h1 style="color:#ea7af4;">${topic}</h1>
+                        <p style="font-size:0.8em; color:#888;">Settings: ${tone} Tone | Language: ${lang}</p>
+                        <hr style="margin:10px 0; border-color:rgba(255,255,255,0.1);">
+                        
+                        <h3>Introduction</h3>
+                        <p>This is an AI-generated draft regarding <strong>${topic}</strong> using a <em>${tone}</em> tone. The subject matter involves complex analysis suitable for academic review.</p>
+                        
+                        <h3>Key Analysis</h3>
+                        <p>The primary factors influencing this topic include technological advancements and socio-economic shifts. It is crucial to consider the multi-dimensional impact on modern society.</p>
+                        <ul>
+                            <li>Factor 1: Quantitative analysis of data points.</li>
+                            <li>Factor 2: Qualitative assessment of trends.</li>
+                            <li>Factor 3: Future projections and scalability.</li>
+                        </ul>
+                        
+                        <h3>Conclusion</h3>
+                        <p>In summary, ${topic} represents a critical area of study. Further research is recommended to fully understand the long-term implications.</p>
+                        <br>
+                        <small style="color:#b43e8f;">Generated by Dfamo AI • ${new Date().toLocaleDateString()}</small>
+                    `;
+
+                    requestAnimationFrame(() => {
+                        previewEmpty.classList.add('hidden');
+                        previewContent.innerHTML = generatedHTML;
+                        previewContent.classList.remove('hidden');
+                        actionButtons.classList.remove('hidden');
+                        
+                        if(window.innerWidth < 768) {
+                            previewContent.scrollIntoView({ behavior: 'smooth', block: 'start' });
                         }
                     });
-                    
-                    isScrolling = false;
-                });
-                isScrolling = true;
-            }
-        });
-        
-        els.backToTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
 
-        // Optimized FAQ Toggle (Avoids Reflow)
-        window.toggleFaq = (button) => {
-            const wrapper = button.nextElementSibling;
-            const icon = button.querySelector('i');
-            const isExpanded = button.getAttribute('aria-expanded') === 'true';
+                } catch (err) {
+                    showError("Error generating content.");
+                } finally {
+                    setLoading(false);
+                }
+            };
+
+            form.addEventListener('submit', generateDocument);
             
-            button.setAttribute('aria-expanded', !isExpanded);
-            wrapper.classList.toggle('open');
-            icon.style.transform = isExpanded ? 'rotate(0deg)' : 'rotate(180deg)';
-        }
-
-        // Mode Switching
-        function setMode(newMode) {
-            mode = newMode;
-            [els.textBtn, els.imgBtn, els.audioBtn].forEach(btn => {
-                btn.className = "flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-sm font-bold transition-all duration-300 hover:bg-white/5 text-gray-400 hover:text-white";
+            // Ctrl+Enter Shortcut
+            promptInput.addEventListener('keydown', (e) => {
+                if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') generateDocument(e);
             });
-            const activeClass = "flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-sm font-bold transition-all duration-300 bg-gradient-to-r from-brand-indigo to-brand-fandango shadow-lg text-white";
-            
-            if(mode === 'text') els.textBtn.className = activeClass;
-            if(mode === 'image') els.imgBtn.className = activeClass;
-            if(mode === 'audio') els.audioBtn.className = activeClass;
 
-            els.textCont.classList.add('hidden');
-            els.imgCont.classList.add('hidden');
-            els.audioCont.classList.add('hidden');
+            // Clear Button
+            clearBtn.addEventListener('click', () => {
+                requestAnimationFrame(() => {
+                    promptInput.value = '';
+                    charCount.textContent = '0 chars';
+                    previewContent.innerHTML = '';
+                    previewContent.classList.add('hidden');
+                    previewEmpty.classList.remove('hidden');
+                    actionButtons.classList.add('hidden');
+                    promptInput.focus();
+                });
+            });
 
-            if(mode === 'text') els.textCont.classList.remove('hidden');
-            if(mode === 'image') els.imgCont.classList.remove('hidden');
-            if(mode === 'audio') els.audioCont.classList.remove('hidden');
+            // Copy to Clipboard
+            copyBtn.addEventListener('click', () => {
+                const text = previewContent.innerText;
+                navigator.clipboard.writeText(text).then(() => {
+                    const originalIcon = copyBtn.innerHTML;
+                    copyBtn.innerHTML = '<i class="fa-solid fa-check text-green-400"></i>';
+                    setTimeout(() => { copyBtn.innerHTML = originalIcon; }, 2000);
+                });
+            });
 
-            stopListening();
-        }
+            // Download PDF
+            downloadBtn.addEventListener('click', () => {
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+                
+                doc.setFont("helvetica");
+                doc.setFontSize(16);
+                doc.setTextColor(59, 0, 134);
+                doc.text("Dfamo AI Generation", 20, 20);
+                
+                doc.setFontSize(10);
+                doc.setTextColor(100);
+                doc.text(`Topic: ${promptInput.value.substring(0, 30)}...`, 20, 28);
+                
+                doc.setFontSize(12);
+                doc.setTextColor(0, 0, 0);
+                
+                const text = previewContent.innerText;
+                const splitText = doc.splitTextToSize(text, 170);
+                doc.text(splitText, 20, 40);
+                
+                doc.save('Dfamo-Doc.pdf');
+            });
 
-        els.textBtn.addEventListener('click', () => setMode('text'));
-        els.imgBtn.addEventListener('click', () => setMode('image'));
-        els.audioBtn.addEventListener('click', () => setMode('audio'));
-
-        // Keyboard Shortcuts
-        document.addEventListener('keydown', (e) => {
-            if (e.ctrlKey && e.key === 'Enter') handleSubmit();
-            if (e.ctrlKey && e.key === 'k') {
-                e.preventDefault();
-                handleRefresh();
-            }
-        });
-
-        // Formatter
-        function formatSolution(text) {
-            text = text.replace(/###\s*(.*?)$/gm, '<h3 class="text-xl font-bold text-brand-violet mt-6 mb-3 border-b border-white/10 pb-2">$1</h3>');
-            text = text.replace(/\*\*(.*?)\*\*/g, '<strong class="text-white font-semibold">$1</strong>');
-            
-            text = text.replace(/\\\[([\s\S]*?)\\\]/g, (match, formula) => `<div class="my-3 p-4 bg-brand-dark/40 rounded-lg border border-brand-indigo/50 text-brand-violet font-mono text-sm overflow-x-auto shadow-inner">${formula}</div>`);
-            text = text.replace(/\\\(([\s\S]*?)\\\)/g, (match, formula) => `<span class="inline-block px-2 py-0.5 bg-brand-dark/40 rounded text-brand-violet font-mono text-sm mx-1 border border-brand-indigo/30">${formula}</span>`);
-            text = text.replace(/\\boxed\{([\s\S]*?)\}/g, (match, content) => `<div class="my-6 p-5 bg-gradient-to-r from-brand-indigo/40 to-brand-grape/40 rounded-xl border border-brand-violet/50 text-white font-bold text-center text-xl shadow-lg shadow-brand-violet/10 flex flex-col items-center"><span class="text-xs uppercase tracking-widest text-brand-violet mb-1">Final Answer</span>${content}</div>`);
-
-            const lines = text.split('\n');
-            let formatted = '';
-            let inList = false;
-
-            for (let line of lines) {
-                const trimmed = line.trim();
-                if (trimmed.match(/^\d+\.\s+/)) {
-                    if (!inList) formatted += '<ul class="space-y-3 my-4">';
-                    inList = true;
-                    formatted += `<li class="flex gap-3 text-gray-300"><span class="text-brand-violet mt-1">●</span><span>${trimmed.replace(/^\d+\.\s+/, '')}</span></li>`;
-                } else if (trimmed.startsWith('-') || trimmed.startsWith('•')) {
-                    if (!inList) formatted += '<ul class="space-y-2 my-3">';
-                    inList = true;
-                    formatted += `<li class="flex gap-3 text-gray-300"><span class="text-brand-fandango mt-1">○</span><span>${trimmed.substring(1).trim()}</span></li>`;
+            // Helper Functions
+            function setLoading(isLoading) {
+                if (isLoading) {
+                    generateBtn.disabled = true;
+                    btnText.textContent = "Working Magic...";
+                    btnLoader.classList.remove('hidden');
+                    generateBtn.classList.add('opacity-75', 'cursor-not-allowed');
                 } else {
-                    if (inList) { formatted += '</ul>'; inList = false; }
-                    if (trimmed && !trimmed.includes('<h3') && !trimmed.includes('<div')) {
-                        formatted += `<p class="mb-3 text-gray-300 leading-relaxed">${trimmed}</p>`;
-                    } else formatted += trimmed;
+                    generateBtn.disabled = false;
+                    btnText.textContent = "Generate Document";
+                    btnLoader.classList.add('hidden');
+                    generateBtn.classList.remove('opacity-75', 'cursor-not-allowed');
                 }
             }
-            if(inList) formatted += '</ul>';
-            return formatted;
-        }
 
-        // Clean OCR
-        function cleanOCRText(text) {
-            let cleaned = text;
-            cleaned = cleaned.replace(/V(\d+)/g, '√$1').replace(/v(\d+)/g, '√$1').replace(/\bsqrt\s*\(?(\d+)\)?/gi, '√$1');
-            cleaned = cleaned.replace(/\s*\*\s*/g, '×').replace(/\s+/g, ' ').trim();
-            return cleaned;
-        }
-
-        // Logic
-        async function handleSubmit() {
-            let inputQ = '';
-            if(mode === 'text') inputQ = els.input.value;
-            else if(mode === 'image' || mode === 'audio') inputQ = question;
-
-            if(!inputQ.trim()) { alert('Please enter a question, upload an image, or speak!'); return; }
-
-            let count = mode === 'image' ? 10 : 5;
-            const originalBtnText = els.submitBtn.innerHTML;
-            els.submitBtn.disabled = true;
-            els.submitBtn.classList.add('opacity-75', 'cursor-not-allowed');
-            els.solution.innerHTML = '<div class="flex flex-col items-center justify-center py-10"><i class="fas fa-circle-notch fa-spin text-4xl text-brand-violet mb-4"></i><p class="animate-pulse">Analyzing with AI...</p></div>';
-
-            els.pencil.classList.add('animating');
-            setTimeout(() => els.pencil.classList.remove('animating'), 4000);
-
-            countdownInterval = setInterval(() => {
-                count--;
-                els.submitBtn.innerHTML = `<span>Thinking... (${count}s)</span>`;
-                if(count <= 0) clearInterval(countdownInterval);
-            }, 1000);
-
-            try {
-                const prompt = `You are Dfamo, a helpful AI tutor created by Aryansh Rai (FoilAI). Solve this: ${inputQ}. Rules: Simple English, step-by-step, clear final answer.`;
-                const url = `https://text.pollinations.ai/${encodeURIComponent(prompt)}`;
-                const response = await fetch(url);
-                const data = await response.text();
-                els.solution.innerHTML = formatSolution(data);
-                els.solution.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            } catch (err) {
-                console.error(err);
-                els.solution.innerHTML = `<p class="text-red-400">Error: Could not connect to AI server.</p>`;
-            } finally {
-                clearInterval(countdownInterval);
-                els.submitBtn.disabled = false;
-                els.submitBtn.classList.remove('opacity-75', 'cursor-not-allowed');
-                els.submitBtn.innerHTML = originalBtnText;
+            function showError(msg) {
+                errorContainer.classList.remove('hidden');
+                document.getElementById('error-message').textContent = msg;
+                setTimeout(() => errorContainer.classList.add('hidden'), 5000);
             }
-        }
-
-        function handleRefresh() {
-            els.input.value = '';
-            question = '';
-            els.solution.innerHTML = '<div class="text-center text-gray-500 py-8"><i class="fas fa-sparkles text-2xl mb-2 opacity-50"></i><p>Your detailed solution will appear here...</p></div>';
-            els.uploadLabel.innerHTML = '<span class="font-semibold text-brand-violet">Click to upload</span> or drag and drop';
-            els.extractInfo.classList.add('hidden');
-            els.transcript.textContent = '';
-            els.transcriptBox.classList.add('hidden');
-            stopListening();
-        }
-
-        // Image Logic
-        els.fileInput.addEventListener('change', async (e) => {
-            const file = e.target.files?.[0];
-            if(!file) return;
-            els.uploadLabel.innerHTML = '<span class="text-brand-violet animate-pulse">Scanning image...</span>';
-            try {
-                const { createWorker } = Tesseract;
-                const worker = await createWorker('eng');
-                const imgUrl = URL.createObjectURL(file);
-                const { data: { text } } = await worker.recognize(imgUrl);
-                await worker.terminate();
-                const cleaned = cleanOCRText(text);
-                question = cleaned;
-                els.input.value = cleaned; 
-                els.uploadLabel.innerHTML = `<span class="text-green-400"><i class="fas fa-check"></i> ${file.name}</span>`;
-                els.extractInfo.innerHTML = `<strong>Extracted:</strong> ${cleaned.substring(0, 50)}...`;
-                els.extractInfo.classList.remove('hidden');
-            } catch (err) {
-                els.uploadLabel.innerHTML = '<span class="text-red-400">Scan failed. Try again.</span>';
-            }
+            function hideError() { errorContainer.classList.add('hidden'); }
         });
-
-        // Audio Logic
-        function initSpeech() {
-            if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-                const SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
-                recognition = new SpeechRecognition();
-                recognition.continuous = true;
-                recognition.interimResults = true;
-                recognition.onresult = (event) => {
-                    let finalTrans = '';
-                    for (let i = event.resultIndex; i < event.results.length; i++) {
-                        if (event.results[i].isFinal) finalTrans += event.results[i][0].transcript + ' ';
-                    }
-                    if (finalTrans) {
-                        const currentText = els.transcript.textContent;
-                        const newText = currentText + finalTrans;
-                        els.transcript.textContent = newText;
-                        question = newText;
-                        els.input.value = newText;
-                        els.transcriptBox.classList.remove('hidden');
-                    }
-                };
-                recognition.onend = () => { isListening = false; updateMicUI(); };
-            }
-        }
-        function toggleMic() {
-            if(!recognition) initSpeech();
-            if(!recognition) { alert('Speech not supported.'); return; }
-            if(isListening) stopListening(); else startListening();
-        }
-        function startListening() { try { recognition.start(); isListening = true; updateMicUI(); } catch(e){} }
-        function stopListening() { if(recognition && isListening) { recognition.stop(); isListening = false; updateMicUI(); } }
-        function updateMicUI() {
-            if(isListening) {
-                els.micBtn.classList.add('animate-pulse');
-                els.micIcon.classList.remove('fa-microphone');
-                els.micIcon.classList.add('fa-stop');
-                els.micStatus.innerHTML = '<span class="text-brand-violet">Listening... Click to stop</span>';
-            } else {
-                els.micBtn.classList.remove('animate-pulse');
-                els.micIcon.classList.add('fa-microphone');
-                els.micIcon.classList.remove('fa-stop');
-                els.micStatus.innerText = 'Tap microphone to speak';
-            }
-        }
-
-        els.micBtn.addEventListener('click', toggleMic);
-        els.submitBtn.addEventListener('click', handleSubmit);
-        els.refreshBtn.addEventListener('click', handleRefresh);
-        initSpeech();
     </script>
 </body>
 </html>
