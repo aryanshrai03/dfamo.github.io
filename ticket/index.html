@@ -14,60 +14,91 @@
       margin: 6px 0;
       padding: 10px;
     }
+    button {
+      cursor: pointer;
+    }
     pre {
       background: #111;
       color: #0f0;
       padding: 10px;
       white-space: pre-wrap;
+      min-height: 120px;
     }
   </style>
 </head>
 <body>
 
-<h2>Ticket System Test</h2>
+<h2>🔧 Ticket System – Test Page</h2>
 
-<input id="ticketId" value="vercel-test" />
-<input id="author" value="Browser" />
-<textarea id="message">Hello from Vercel</textarea>
+<label>Ticket ID</label>
+<input id="ticketId" value="foil-test" />
+
+<label>Person Type (Staff / User)</label>
+<input id="author" value="Staff" />
+
+<label>Message</label>
+<textarea id="message">Hello from Foil</textarea>
 
 <button id="sendBtn">Send Message</button>
 <button id="loadBtn">Load Transcript</button>
 
-<pre id="output"></pre>
+<h3>Transcript</h3>
+<pre id="output">— empty —</pre>
 
 <script>
 const API = "/api";
- // Vercel proxy
+const API_KEY = "KdWSWB8wy63465496485dsKUFWWS8572";
 
-document.getElementById("sendBtn").onclick = async () => {
+document.getElementById("sendBtn").addEventListener("click", async () => {
   try {
-    const ticketId = document.getElementById("ticketId").value;
-    const author = document.getElementById("author").value;
-    const message = document.getElementById("message").value;
+    const ticketId = document.getElementById("ticketId").value.trim();
+    const author = document.getElementById("author").value.trim();
+    const message = document.getElementById("message").value.trim();
+
+    if (!ticketId || !message) {
+      alert("Ticket ID and message are required");
+      return;
+    }
 
     const res = await fetch(`${API}/ticket`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-key": API_KEY
+      },
       body: JSON.stringify({ ticketId, author, message })
     });
 
     const text = await res.text();
-    alert("Sent: " + text);
-  } catch (e) {
-    alert("ERROR: " + e.message);
+    alert("Sent ✅\n" + text);
+  } catch (err) {
+    alert("ERROR ❌ " + err.message);
+    console.error(err);
   }
-};
+});
 
-document.getElementById("loadBtn").onclick = async () => {
+document.getElementById("loadBtn").addEventListener("click", async () => {
   try {
-    const ticketId = document.getElementById("ticketId").value;
-    const res = await fetch(`${API}/ticket/${ticketId}`);
+    const ticketId = document.getElementById("ticketId").value.trim();
+
+    const res = await fetch(`${API}/ticket/${ticketId}`, {
+      headers: {
+        "x-api-key": API_KEY
+      }
+    });
+
+    if (!res.ok) {
+      document.getElementById("output").textContent = "Ticket not found";
+      return;
+    }
+
     const text = await res.text();
     document.getElementById("output").textContent = text;
-  } catch (e) {
-    alert("ERROR: " + e.message);
+  } catch (err) {
+    alert("ERROR ❌ " + err.message);
+    console.error(err);
   }
-};
+});
 </script>
 
 </body>
