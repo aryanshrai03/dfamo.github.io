@@ -1,21 +1,34 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Ticket System Test</title>
   <style>
-    body { font-family: Arial; max-width: 600px; margin: 40px auto; }
-    input, textarea, button { width: 100%; padding: 10px; margin: 6px 0; }
-    pre { background: #111; color: #0f0; padding: 10px; white-space: pre-wrap; }
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 600px;
+      margin: 40px auto;
+    }
+    input, textarea, button {
+      width: 100%;
+      margin: 6px 0;
+      padding: 10px;
+    }
+    pre {
+      background: #111;
+      color: #0f0;
+      padding: 10px;
+      white-space: pre-wrap;
+    }
   </style>
 </head>
 <body>
 
 <h2>Ticket System Test</h2>
 
-<input id="ticketId" value="debug-test" />
+<input id="ticketId" value="vercel-test" />
 <input id="author" value="Browser" />
-<textarea id="message">Hello from page</textarea>
+<textarea id="message">Hello from Vercel</textarea>
 
 <button id="sendBtn">Send Message</button>
 <button id="loadBtn">Load Transcript</button>
@@ -23,9 +36,9 @@
 <pre id="output"></pre>
 
 <script>
-const API = "http://5.230.171.52:2576";
+const API = "/ticket"; // Vercel proxy
 
-document.getElementById("sendBtn").addEventListener("click", async () => {
+document.getElementById("sendBtn").onclick = async () => {
   try {
     const ticketId = document.getElementById("ticketId").value;
     const author = document.getElementById("author").value;
@@ -38,24 +51,22 @@ document.getElementById("sendBtn").addEventListener("click", async () => {
     });
 
     const text = await res.text();
-    alert("Sent! Response: " + text);
-  } catch (err) {
-    alert("ERROR: " + err.message);
-    console.error(err);
+    alert("Sent: " + text);
+  } catch (e) {
+    alert("ERROR: " + e.message);
   }
-});
+};
 
-document.getElementById("loadBtn").addEventListener("click", async () => {
+document.getElementById("loadBtn").onclick = async () => {
   try {
     const ticketId = document.getElementById("ticketId").value;
     const res = await fetch(`${API}/ticket/${ticketId}`);
     const text = await res.text();
     document.getElementById("output").textContent = text;
-  } catch (err) {
-    alert("ERROR: " + err.message);
-    console.error(err);
+  } catch (e) {
+    alert("ERROR: " + e.message);
   }
-});
+};
 </script>
 
 </body>
