@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Ticket System Test</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 600px;
+      margin: 40px auto;
+    }
+    input, textarea, button {
+      width: 100%;
+      margin: 6px 0;
+      padding: 10px;
+    }
+    button {
+      cursor: pointer;
+    }
+    pre {
+      background: #111;
+      color: #0f0;
+      padding: 10px;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+<body>
+
+<h2>Ticket System Test</h2>
+
+<input id="ticketId" placeholder="Ticket ID (e.g. test-1)" />
+<input id="author" placeholder="Author (User / Support)" />
+<textarea id="message" placeholder="Message"></textarea>
+
+<button onclick="sendMessage()">Send Message</button>
+<button onclick="loadTicket()">Load Transcript</button>
+
+<h3>Transcript</h3>
+<pre id="output"></pre>
+
+<script>
+const API = "http://5.230.171.52:2576";
+
+async function sendMessage() {
+  const ticketId = document.getElementById("ticketId").value;
+  const author = document.getElementById("author").value;
+  const message = document.getElementById("message").value;
+
+  if (!ticketId || !message) {
+    alert("Ticket ID and message are required");
+    return;
+  }
+
+  const res = await fetch(`${API}/ticket`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ ticketId, author, message })
+  });
+
+  if (!res.ok) {
+    alert("Failed to save message");
+    return;
+  }
+
+  alert("Message saved ✅");
+}
+
+async function loadTicket() {
+  const ticketId = document.getElementById("ticketId").value;
+
+  if (!ticketId) {
+    alert("Ticket ID required");
+    return;
+  }
+
+  const res = await fetch(`${API}/ticket/${ticketId}`);
+
+  if (!res.ok) {
+    document.getElementById("output").textContent = "Ticket not found";
+    return;
+  }
+
+  const text = await res.text();
+  document.getElementById("output").textContent = text;
+}
+</script>
+
+</body>
+</html>
